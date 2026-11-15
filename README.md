@@ -9,7 +9,7 @@ Reusable Codex skills maintained by ULBS.
 
 ## Use
 
-Clone this repository, then copy or symlink the needed skill folder into your Codex skills directory (for example, `~/.codex/skills/`). Codex loads a skill when its `SKILL.md` matches the request.
+Clone this repository, then copy or symlink the needed skill folder into the skills directory of your agent harness. These skills use the standard `SKILL.md` layout and work with any harness that supports it; follow that harness's installation and discovery conventions.
 
 `ulbs-brand` has no runtime dependency. `ulbs-lecture-deck` needs Python 3.8+ to build decks. For browser tests, install Node.js 18+, then run `npm install` and `npx playwright install chromium` inside `ulbs-lecture-deck/`.
 
