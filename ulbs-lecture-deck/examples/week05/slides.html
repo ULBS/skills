@@ -1,0 +1,543 @@
+
+    <!-- 1 -->
+    <section class="slide title" data-segment="intro" data-id="title" data-title="Two systems, one method">
+      <img class="logo-big" src="{{LOGO}}" alt="Universitatea Lucian Blaga din Sibiu">
+      <h2 style="font-size:16px;letter-spacing:2px;text-transform:uppercase;color:#aac4ee">Software Architecture · Case studies</h2>
+      <h1>Two systems, one method</h1>
+      <p>A fleet of 10,000 cars that never stops talking, and an HR system for a paper company. Same architect’s method, very different answers.</p>
+      <div class="case-chips"><span>🚗 Muscar.auto · telemetry</span><span>🗂️ Dunderly · HR system</span></div>
+      <div class="meta">Requirements · data volume · components · technology · redundancy · diagrams</div>
+      <div class="hints"><span><kbd>←</kbd> <kbd>→</kbd> navigate</span><span><kbd>N</kbd> notes</span><span><kbd>G</kbd> all slides</span><span>hover a button: tooltip</span><span><kbd>?</kbd> help</span></div>
+      <svg class="motif2" viewBox="0 0 460 280" aria-hidden="true">
+        <g stroke="#8fbcff" stroke-width="2" fill="none" class="edges" opacity=".85">
+          <path class="pulse" d="M62 60 L150 60"/><path class="pulse" d="M222 60 L270 60"/><path class="pulse" d="M342 60 L390 60"/>
+          <path class="pulse" d="M62 220 L120 220"/><path class="pulse" d="M190 220 L250 220"/><path class="pulse" d="M320 220 L390 220"/>
+        </g>
+        <g fill="#0B2F63" stroke="#8fbcff" stroke-width="2.5">
+          <rect x="6" y="38" width="56" height="44" rx="9"/><rect x="150" y="34" width="72" height="52" rx="9"/><rect x="270" y="34" width="72" height="52" rx="9" fill="#F7A30F" stroke="#fff"/><rect x="390" y="34" width="64" height="52" rx="9"/>
+          <rect x="6" y="198" width="56" height="44" rx="9"/><rect x="120" y="194" width="70" height="52" rx="9"/><rect x="250" y="194" width="70" height="52" rx="9"/><rect x="390" y="194" width="64" height="52" rx="9" fill="#7FCC27" stroke="#fff"/>
+        </g>
+        <g fill="#fff" font-size="12" font-weight="700" text-anchor="middle">
+          <text x="34" y="65">Cars</text><text x="186" y="65">Gateway</text><text x="306" y="65" fill="#2a1800">Kafka</text><text x="422" y="65">Mongo</text>
+          <text x="34" y="225">User</text><text x="155" y="225">Services</text><text x="285" y="225">Queue</text><text x="422" y="225" fill="#10240a">SQL</text>
+        </g>
+      </svg>
+      <aside class="notes">
+        <p class="say">Open with the contrast: both systems have about 10 concurrent users. One stores 605 GB a day, the other 25 GB in five years. The method is the same; the decisions are not.</p>
+        <ul><li>Hover any button or slider: a tooltip says what it does. Notes (<kbd>N</kbd>) hold the talk track, and the questions to ask the room.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 2 -->
+    <section class="slide" data-segment="intro" data-id="m-goals" data-title="What you will learn">
+      <h2><span class="kick">Goals</span>What you will learn and what you hand in</h2>
+      <p class="sub">Two real-world case studies, walked through step by step. You do the architect’s job: ask, calculate, choose, justify. Then you apply the same habits to InstaKill.</p>
+      <div class="cols three grow" style="margin-top:6px">
+        <div class="card big"><h3>🚗 Case 1 · Muscar.auto</h3><ul class="tight"><li>A data-intensive system</li><li>7,000 messages a second</li><li>Queue, NoSQL, cloud archive, BI</li></ul></div>
+        <div class="card big"><h3>🗂️ Case 2 · Dunderly</h3><ul class="tight"><li>A classic information system</li><li>CRUD, workflows, a legacy file interface</li><li>.NET, SQL Server, RabbitMQ, logging</li></ul></div>
+        <div class="card big"><h3>🧪 Your labs</h3><ul class="tight"><li><b>Analytics lab</b>: analytics in SQL, populate the DB</li><li><b>Load-test lab</b>: Locust, SQLite vs PostgreSQL</li><li>Push to your team repository</li></ul></div>
+      </div>
+      <div class="callout"><b>By the end you can:</b> turn vague requirements into numbers, justify a technology with a decision matrix, give every component an application type, internal layers, an API and a redundancy plan, and draw the logic, technical and physical diagrams.</div>
+      <aside class="notes">
+        <p class="say">Two cases, one method, then your own project. The cases are deliberately opposite so you can see which requirements actually drive the design.</p>
+        <ul><li>Ask the room to predict: which system is harder to build? Keep the answers; revisit on the comparison slide.</li>
+        <li>Analytics lab: analytics view (SQL, frontend + backend) and a populate script. Load-test lab: Locust load tests against SQLite and PostgreSQL. Details on the last slides.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 3 -->
+    <section class="slide" data-segment="intro" data-id="m-method" data-title="The architect’s method">
+      <h2><span class="kick">The method</span>Ten steps we will repeat in both cases</h2>
+      <p class="sub"><b>What you see.</b> The path of every case study, from vague requirements to the physical diagram. Click a step to jump to the first slide where it happens; the kicker line of each slide tells you which step you are in.</p>
+      <div data-widget="method" class="grow"></div>
+      <div class="callout gold"><b>Why a method?</b> Every decision answers a requirement you wrote down. If you cannot name the requirement behind a technology choice, you are guessing.</div>
+      <aside class="notes">
+        <p class="say">This is the spine of the next two hours. We run the same ten steps twice.</p>
+        <ul><li>Steps 1–3 are about the problem (requirements, numbers). Steps 4–8 are about the solution, component by component. Steps 9–10 are about surviving failure and communicating the result.</li>
+        <li>Connect to Weeks 2–4: C4 context/container/component diagrams, ADRs and architecture styles. Logic/technical/physical diagrams are the same idea from another angle.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 4 -->
+    <section class="slide" data-segment="muscar" data-id="m-brief" data-title="The client brief">
+      <h2><span class="kick">Case 1 · The brief</span>The e-mail that starts the project</h2>
+      <p class="sub"><b>What you see.</b> A first message from the client, written for this course. The yellow phrases are clickable: each one shows what the architect reads between the lines. The right side lists what the e-mail does <i>not</i> tell us yet.</p>
+      <div data-widget="brief" data-case="muscar" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Every project starts with a vague message. Our job is to turn it into requirements, numbers and decisions.</p>
+        <ul><li>The client and the e-mail are fictional. The facts (autonomous systems, 10,000 cars now, 200,000 expected, telemetry such as location, speed and breakdowns) come from the case study; the wording of the e-mail is ours.</li><li>Let students find the missing numbers before clicking: users, messages per second, size, retention, criticality. Those are exactly the questions of the next slides.</li><li>Point out “reliably” and “over 200,000”: the two words that will cost the most money.</li></ul>
+      </aside>
+    </section>
+
+    <section class="slide" data-segment="muscar" data-id="m-meet" data-title="Meet Muscar.auto">
+      <h2><span class="kick">Case 1 · Muscar.auto</span>A fleet that never stops talking</h2>
+      <p class="sub"><b>What you see.</b> Each blue dot is a vehicle; each gold dot is a telemetry message flying to the gateway. Drag the fleet size and watch the message rate and the data rate grow.</p>
+      <div class="cols" style="grid-template-columns:.8fr 1.5fr;align-items:start">
+        <div class="card"><h3>The company</h3><ul class="tight" style="font-size:17px"><li>Manufactures <b>autonomous systems</b> for vehicles</li><li><b>&gt; 10,000</b> vehicles on the road now</li><li><b>&gt; 200,000</b> expected by the end of the year</li><li>Needs to <b>reliably receive telemetry</b> and <b>display data</b> about the cars</li></ul>
+          <div class="callout" style="margin-top:10px;font-size:15px"><b>Predict first:</b> what is harder here, the dashboard or the data collection?</div></div>
+        <div data-widget="fleet"></div>
+      </div>
+      <aside class="notes">
+        <p class="say">Muscar builds the software that drives cars. The cars report back constantly. Our job: receive it reliably and show it.</p>
+        <ul><li>The case says 10,000 vehicles today and 200,000 by year end; the requirements later say 7,000 msgs/s. That implies 0.7 messages per vehicle per second. At 200,000 vehicles it would be 140,000 msgs/s. <b>That tension is real</b>: a good architect asks which number to design for. We keep 7,000 and flag the question.</li>
+        <li>Answer to the prediction: the dashboard is easy (10 users). The data collection is the hard part.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 5 -->
+    <section class="slide" data-segment="muscar" data-id="m-req" data-title="Requirements">
+      <h2><span class="kick">Case 1 · Step 1 · Requirements</span>Functional or non-functional?</h2>
+      <p class="sub"><b>What you see.</b> Nine requirements of the Muscar system, one at a time. Decide whether each describes what the system <i>does</i> (functional) or what it must <i>cope with</i> (non-functional). Answers fill the two boxes.</p>
+      <div data-widget="sorter" data-case="muscar" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Functional requirements are the feature list. Non-functional requirements are where the architecture comes from.</p>
+        <ul><li>Functional: web based, receive telemetry (location, speed, breakdowns…), store in a persistent store, display dashboards, perform analysis.</li>
+        <li>What we know about the NFRs from the start: <b>data intensive</b>, not many users, a lot of data, performance is important. Those four facts already say “the hard part is the data”.</li>
+        <li>“Web based” is listed as functional in the case study; many architects call it a constraint. Not worth a debate: just notice that it is a platform decision made upfront.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 6 -->
+    <section class="slide" data-segment="muscar" data-id="m-ask" data-title="Ask the client">
+      <h2><span class="kick">Case 1 · Step 2 · Ask about the NFRs</span>You are the architect: interview the client</h2>
+      <p class="sub"><b>What you see.</b> The six questions the architect asks Muscar. Click a question to hear the client’s answer and what it means for the design; the requirements sheet on the right fills in.</p>
+      <div data-widget="interview" data-case="muscar" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Never design from the functional list alone. Six questions turn “a lot of data” into numbers.</p>
+        <ul><li>10 concurrent users, 7,000 messages/s, 1 KB per message, schema-less: yes, message loss: “sort of…”, SLA: highest possible.</li>
+        <li>“Sort of…” is the interesting one: some loss is tolerable, but not for breakdown alarms. Ask the client to say which messages matter most.</li>
+        <li>Pause on “schema-less”: different car models report different fields.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 7 -->
+    <section class="slide" data-segment="muscar" data-id="m-vol" data-title="Data volume">
+      <h2><span class="kick">Case 1 · Step 3 · Data volume</span>7,000 messages a second is… how much?</h2>
+      <p class="sub"><b>What you see.</b> The arithmetic behind the design. Change the fleet size, the message size or the retention and watch the numbers. The preset buttons load the slide’s scenario, a fleet 20 times larger, or a full year kept in the fast database.</p>
+      <div data-widget="volume" data-case="muscar" class="grow"></div>
+      <aside class="notes">
+        <p class="say">1 message = 1 KB. 7,000 per second = 7 MB per second = about 25 GB an hour = about 605 GB a day = about 221 TB a year. That’s a lot.</p>
+        <ul><li>Calculate on the board before pressing the preset: students should get 25.2 GB/h, 604.8 GB/day, 220.7 TB/year (decimal units).</li>
+        <li>Press “Fleet grows 20×”: 140,000 msgs/s, about 12 TB a day. The case does not cover this: it is the capacity-planning question you should raise with the client.</li>
+        <li>Press “Keep a full year hot”: the meter explodes. Leads to the next slide: retention.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 8 -->
+    <section class="slide" data-segment="muscar" data-id="m-ret" data-title="Retention period">
+      <h2><span class="kick">Case 1 · Step 3 · Data volume</span>Retention: how long do we keep the data fast?</h2>
+      <p class="sub"><b>What you see.</b> One square per day, the newest on the right. Teal days live in the fast operational database, gold days are older than the retention period and have moved to the archive. Start at day 1, press Next day, and watch the oldest teal day turn gold. Change the retention or choose Delete instead.</p>
+      <div data-widget="retention" class="grow"></div>
+      <aside class="notes">
+        <p class="say">The retention period defines for how long records stay in the database, and what happens to them afterwards: deleted, or moved to an archive.</p>
+        <ul><li>Motivation: keep the database from exploding and keep queries fast.</li>
+        <li>Muscar needs two kinds of data: operational near-real-time (location, speed) with 1 week of retention, and aggregated data for BI that is kept forever.</li>
+        <li>The 4 TB limit of the operational DB is simply 605 GB × 7 days.</li>
+        <li>Ask: what would break if we chose “delete”? (No history, no trends, no forecasts.)</li></ul>
+      </aside>
+    </section>
+
+    <!-- 9 -->
+    <section class="slide" data-segment="muscar" data-id="m-comp" data-title="Components and messaging">
+      <h2><span class="kick">Case 1 · Step 4 · Components and messaging</span>From requirements to boxes</h2>
+      <p class="sub"><b>What you see.</b> The Muscar system as components. Start on “Components”, then press “Messaging” to see how they talk (TCP, queue, ETL). Click a box to read why it exists.</p>
+      <div data-widget="diagram" data-case="muscar" data-mode="components" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Each requirement becomes a component: receive telemetry (gateway), queue it (pipeline), validate and store it (processor), query it (viewer), analyze it (warehouse + BI), archive it.</p>
+        <ul><li>Components: Telemetry Gateway, Telemetry Pipeline, Telemetry Processor, Operational DB, Telemetry Viewer, Data Warehouse, BI Application, Archive DB.</li>
+        <li>Messaging: cars → gateway over <b>TCP</b>; the two <b>ETL</b> flows move data from the operational DB to the archive and to the warehouse.</li>
+        <li>The next slides take the components one by one, in the order data flows.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 10 -->
+    <section class="slide" data-segment="muscar" data-id="m-gw" data-title="Gateway: type and language">
+      <h2><span class="kick">Case 1 · Steps 5–6 · Telemetry Gateway</span>Application type and language</h2>
+      <p class="sub"><b>What you see.</b> The gateway receives TCP data from the cars and pushes it to the pipeline: a background <b>service</b>, not a website. Which language? Weigh the criteria; the scores describe the languages, the weights describe Muscar.</p>
+      <div class="row" style="gap:6px;margin:0 0 6px;align-items:center"><span class="small"><b>Application type:</b></span><span class="pill">Web app / API</span><span class="pill">Mobile</span><span class="pill">Desktop</span><span class="pill">Console</span><span class="pill ok" data-tip="Receives TCP data all day, no user interface: a service running in the background.">✓ Service (background)</span></div>
+      <div data-widget="matrix" data-preset="lang-mus" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Technology choice considers four things: the load, the performance needed, the team’s current knowledge, and the environment.</p>
+        <ul><li>The team knows Python and is expert in JavaScript, and uses only Linux servers. <b>Python can’t be used for the gateway: too slow.</b> Candidate: great performance, runs on Linux, leverages JS skills → Node.js.</li>
+        <li>The scores are the instructor’s judgment, not facts: click a score to disagree, set “Team already knows it” to 0 and watch Java or Go win. That is the lesson: <b>technology follows context</b>.</li>
+        <li>Application type options: web app and API, mobile, console, service, desktop. We will drill the choice on the “Layers” slide.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 11 -->
+    <section class="slide" data-segment="muscar" data-id="m-pipe" data-title="Pipeline: build or buy">
+      <h2><span class="kick">Case 1 · Step 6 · Telemetry Pipeline</span>Build or buy the queue?</h2>
+      <p class="sub"><b>What you see.</b> A decision matrix for the pipeline: a queue that carries 7,000 messages per second between gateway and processor. Nothing exists in the company, so we looked around. Move the weights and see when Kafka stops winning.</p>
+      <div data-widget="matrix" data-preset="queue-mus" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Is there an existing queue in the company? No. Develop our own or use a third party? Let’s look around.</p>
+        <ul><li>Kafka pros: very popular, handles massive amounts of data, supports high availability. Cons: complex set-up and configuration. The decision: Kafka.</li>
+        <li>Set “Throughput” and “Stream processing” to 0 and “Easy to set up” to 5: RabbitMQ wins. We will see exactly that for Dunderly later.</li>
+        <li>A queue also decouples the gateway from the processor: next slide.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 12 -->
+    <section class="slide" data-segment="muscar" data-id="m-redund" data-title="Pipeline in action">
+      <h2><span class="kick">Case 1 · Step 9 · Redundancy</span>Why a queue and why three instances</h2>
+      <p class="sub"><b>What you see.</b> A live simulation. Cars send messages to three gateways, through the queue, to three processors and into the database. Click an instance to crash it, trigger a rush hour, or switch the queue off.</p>
+      <div data-widget="pipeline" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Redundancy for stateless tiers: several instances behind a load balancer. The queue is the shock absorber.</p>
+        <ul><li>Telemetry gateway and processor each run as several instances behind a load balancer.</li>
+        <li>Experiments, in order: (1) default: healthy. (2) “Crash 2 processors”: capacity drops to 3,000/s, the queue grows, data is late but nothing is lost. (3) Switch to “No queue” and crash again: messages are lost. (4) Restart, then “Rush hour ×3”: the gateway tier (12,000/s) is the next bottleneck.</li>
+        <li>Capacities per instance are simulation parameters (gateway 4,000/s, processor 3,000/s), not measurements.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 13 -->
+    <section class="slide" data-segment="muscar" data-id="m-store" data-title="Processor and data store">
+      <h2><span class="kick">Case 1 · Step 6 · Processor and operational DB</span>What do we store the messages in?</h2>
+      <p class="sub"><b>What you see.</b> The processor validates and stores messages; the datastore must support schema-less messages, quick retrieval and no complex queries. Compare a document store, a relational database and an in-memory store.</p>
+      <div data-widget="matrix" data-preset="store-mus" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Technology for the processor: already used in the system, fast, great Kafka support → Node.js again. For the datastore, look at what the data looks like.</p>
+        <ul><li>The datastore must offer schema-less message support, quick retrieval and no complex queries → MongoDB.</li>
+        <li>Notice that “complex queries” has weight 1: the BI side handles them, on aggregated data, somewhere else.</li>
+        <li>Challenge: what if the client later asks for ad-hoc analytics on the operational DB? (Move it to the warehouse, do not complicate the operational store.)</li></ul>
+      </aside>
+    </section>
+
+    <!-- 14 -->
+    <section class="slide" data-segment="muscar" data-id="m-cloud" data-title="Archive in the cloud">
+      <h2><span class="kick">Case 1 · Step 6 · Archive DB</span>221 TB a year: what does it cost?</h2>
+      <p class="sub"><b>What you see.</b> Pay-as-you-go cloud storage prices. Drag the stored data or press “One year of telemetry”, then click a tier. The archive needs a huge, rarely read store with no fast retrieval: the cheapest tier.</p>
+      <div data-widget="cloud" class="grow"></div>
+      <aside class="notes">
+        <p class="say">The archive must hold a huge amount of data, be accessed rarely, need no fast retrieval, and save costs. That sounds like cloud storage.</p>
+        <ul><li>Price table in USD per GB per month (Premium 0.15, Hot 0.018, Cool 0.01, Cold 0.0036, Archive 0.002; first 50 TB, next 450 TB, over 500 TB).</li>
+        <li>221 TB: Premium about $33,150/month, Hot about $3,860, Archive about $442. Same data, a 75× difference.</li>
+        <li>Prices are the case study’s (they change often, and retrieval and transfer fees are extra): use them for the reasoning, not for a budget.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 15 -->
+    <section class="slide" data-segment="muscar" data-id="m-layers" data-title="Application type and layers">
+      <h2><span class="kick">Case 1 · Steps 5 and 7 · Application type and internal layers</span>Which type? Which layers?</h2>
+      <p class="sub"><b>What you see.</b> Pick a component, then its application type. Get it right and the internal layers appear next to the traditional four. Notice what replaces the user interface at the top.</p>
+      <div data-widget="layers" data-case="muscar" class="grow"></div>
+      <aside class="notes">
+        <p class="say">A traditional application has a user interface, business logic, data access and a data store. Our components often have something else on top.</p>
+        <ul><li>Gateway: service interface plus a pipeline: it only receives and pushes. Processor and viewer: the four classic layers.</li>
+        <li>The BI application: the type does not matter, because it is always an existing tool.</li>
+        <li>The application types per component are inferred from the component descriptions in the case study (the original case shows the chosen type only as a graphic).</li></ul>
+      </aside>
+    </section>
+
+    <!-- 16 -->
+    <section class="slide" data-segment="muscar" data-id="m-viewer" data-title="Telemetry Viewer API">
+      <h2><span class="kick">Case 1 · Step 8 · API design</span>Telemetry Viewer: three endpoints</h2>
+      <p class="sub"><b>What you see.</b> A tiny mock server behind the Viewer’s API. Pick an endpoint, edit the path, press Send, read the status code. The table shows which codes the design promised.</p>
+      <div data-widget="api" data-tab="telemetry" data-only="telemetry" class="grow"></div>
+      <aside class="notes">
+        <p class="say">The viewer shows real-time data and does not analyze it. Three questions the user asks, three endpoints.</p>
+        <ul><li><code>GET /api/v1/telemetry/errors</code> (200), <code>GET /api/v1/telemetry/{carId}</code> (200, 404), <code>GET /api/v1/telemetry/errors/{carId}</code> (200, 404). Versioned path, nouns, verbs from HTTP.</li>
+        <li>Try <code>/api/v1/telemetry/errors</code> and <code>/api/v1/telemetry/999</code>. Ask: why does “errors” not get treated as a car id? (More specific route first.)</li>
+        <li>Redundancy as for the others: several instances behind a load balancer.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 17 -->
+    <section class="slide" data-segment="muscar" data-id="m-bi" data-title="BI: not the architect’s job">
+      <h2><span class="kick">Case 1 · Component · BI Application</span>Viewer or BI? And whose job is BI?</h2>
+      <p class="sub"><b>What you see.</b> Eight questions the business might ask. Send each one to the component that should answer it: the real-time Telemetry Viewer or the BI Application on top of the warehouse.</p>
+      <div data-widget="bi" class="grow"></div>
+      <aside class="notes">
+        <p class="say">The viewer shows what is happening now. BI answers questions about the past and the future. And BI is not the architect’s job.</p>
+        <ul><li>BI analyses telemetry and displays custom reports, trends and forecasts. “How many cars broke during the last month?” “What is the total distance the cars drove?”</li>
+        <li><b>An important lesson:</b> designing a BI solution is NOT part of the architect’s job. Always use a BI expert. A BI application is always based on an existing tool.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 18 -->
+    <section class="slide" data-segment="muscar" data-id="m-diag" data-title="Muscar: three diagrams">
+      <h2><span class="kick">Case 1 · Step 10 · Diagrams</span>Logic, technical, physical</h2>
+      <p class="sub"><b>What you see.</b> The finished Muscar architecture. Switch between the views: components (logic), technology (technical) and physical. In the physical view, click instances to crash them and watch which tiers survive.</p>
+      <div data-widget="diagram" data-case="muscar" data-mode="physical" class="grow"></div>
+      <aside class="notes">
+        <p class="say">One system, three pictures for three audiences: what it is, what it is built with, how it is deployed.</p>
+        <ul><li>The logic diagram has the components; the technical diagram adds Node.js, Kafka, MongoDB and Azure Storage (the warehouse and BI are “???” until the BI expert chooses); the physical diagram adds the load balancers and instances.</li>
+        <li>Crash all three gateway instances: the function is lost. Crash one: degraded but working. Kafka, MongoDB and cloud storage bring their own high availability (“product’s high availability”).</li></ul>
+      </aside>
+    </section>
+
+    <!-- 19 -->
+    <section class="slide" data-segment="dunderly" data-id="d-brief" data-title="The client brief">
+      <h2><span class="kick">Case 2 · The brief</span>A shorter e-mail, a different kind of problem</h2>
+      <p class="sub"><b>What you see.</b> The client’s first message again, this time from a paper company. Click the yellow phrases to see what each one implies. Notice how little the e-mail says about size or load.</p>
+      <div data-widget="brief" data-case="dunderly" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Same method, a very different client. No fleet of machines here: a handful of HR people and an old payment system.</p>
+        <ul><li>The client and the e-mail are fictional. The requirements (web based, CRUD on employees, salary approval, vacation days, external payment system) come from the case study.</li><li>Ask the class: what is the riskiest sentence in this e-mail? Expected answer: the existing payment system, because we do not control it.</li><li>Compare with the Muscar e-mail: no numbers there either. Numbers always have to be asked for.</li></ul>
+      </aside>
+    </section>
+
+    <section class="slide" data-segment="dunderly" data-id="d-meet" data-title="Meet Dunderly">
+      <h2><span class="kick">Case 2 · Dunderly</span>A paper company needs an HR system</h2>
+      <p class="sub"><b>What you see.</b> Dunderly sells paper supplies (printer paper, envelopes, …) and needs a new HR system to manage employees, salaries, vacations and payments. Before we ask anything: what do you expect to be different from Muscar?</p>
+      <div class="cols two grow" style="margin-top:4px">
+        <div class="card big"><h3>The functional requirements</h3><ul class="tight"><li>Web based</li><li>CRUD operations on employees</li><li><b>Salaries</b>: a manager asks for a change, the HR manager approves or rejects</li><li>Manage <b>vacation days</b></li><li>Use the <b>external payment system</b></li></ul></div>
+        <div class="card big"><h3>What we know about the NFRs</h3><ul class="tight"><li>A <b>classic information system</b></li><li>Not a lot of users</li><li>Not a lot of data</li><li>An <b>interface to an external system</b></li></ul>
+          <div class="callout gold" style="margin-top:10px;font-size:15px"><b>Predict:</b> will it need a queue? A NoSQL database? Load balancers? Write your guess down.</div></div>
+      </div>
+      <aside class="notes">
+        <p class="say">A very different animal: a classic information system. Few users, little data, but an awkward interface to an old system.</p>
+        <ul><li>Collect predictions from the room (queue? NoSQL? Kafka?). We revisit them on the comparison slide.</li>
+        <li>Both systems have 10 users. Let students notice that on the next slide.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 20 -->
+    <section class="slide" data-segment="dunderly" data-id="d-ask" data-title="Ask the client">
+      <h2><span class="kick">Case 2 · Steps 1–2 · Requirements</span>Interview the client again</h2>
+      <p class="sub"><b>What you see.</b> The questions the architect asks Dunderly. The method is the same as for Muscar; only the answers differ. Click each question and watch the requirements sheet fill in.</p>
+      <div data-widget="interview" data-case="dunderly" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Same questions, completely different answers. Ten concurrent users here too.</p>
+        <ul><li>10 concurrent users, 250 employees (500 in five years), a legacy payment system in C++ that only reads a file once a month, “Not very critical”.</li>
+        <li>The “team skills” question matters here: the company is a Microsoft shop with .NET and SQL Server experts, and that weighs on the technology choices.</li>
+        <li>Final requirements: 10 concurrent users, 500 users managed, 25.5 GB forecast, relational and unstructured data, not mission critical, file-based interface.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 21 -->
+    <section class="slide" data-segment="dunderly" data-id="d-vol" data-title="Data volume">
+      <h2><span class="kick">Case 2 · Step 3 · Data volume</span>Not a lot of data, but the documents matter</h2>
+      <p class="sub"><b>What you see.</b> One employee is about 1 MB of records plus about ten scanned documents of 5 MB each. Move the sliders: the documents dominate. Compare with the 605 GB a day of Muscar.</p>
+      <div data-widget="volume" data-case="dunderly" class="grow"></div>
+      <aside class="notes">
+        <p class="say">51 MB per employee, 500 employees: 25.5 GB. Not a lot. But we have to think about where the documents go.</p>
+        <ul><li>1 employee ≈ 1 MB; 10 scanned documents ≈ 5 MB each; total ≈ 51 MB; 51 MB × 500 = 25.5 GB.</li>
+        <li>Note: the case later calls documents “small (~1 MB)”. Both are small enough for a database. If scans become 20 MB each, the preset shows how the answer changes.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 22 -->
+    <section class="slide" data-segment="dunderly" data-id="d-comp" data-title="Components and messaging">
+      <h2><span class="kick">Case 2 · Step 4 · Components and messaging</span>Services, one shared data store, one file out</h2>
+      <p class="sub"><b>What you see.</b> Dunderly as components. The messaging view shows REST over HTTP between browser and services, a queue towards logging, and a file to the legacy payment system. Click the boxes.</p>
+      <div data-widget="diagram" data-case="dunderly" data-mode="messaging" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Entities: employees, vacation, salary. Each gets a service. Plus a view service, logging, a payment interface and a shared data store.</p>
+        <ul><li>Question: single data store or one per service? Answer: the data is shared between services, so a <b>single data store</b> is better.</li>
+        <li>Messaging: browser → services over REST API / HTTP, browser gets the HTML page from the View Service, services write logs to a queue, the Payment Interface hands a <b>file</b> to the payment system.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 23 -->
+    <section class="slide" data-segment="dunderly" data-id="d-log" data-title="Logging: build or buy">
+      <h2><span class="kick">Case 2 · Step 6 · Logging Service</span>Is there a logging mechanism in the company?</h2>
+      <p class="sub"><b>What you see.</b> Logging is very important and every other service uses it. Nothing exists in the company, so: build or buy? The ELK stack is powerful, but is it right here? Move the weights.</p>
+      <div data-widget="matrix" data-preset="log-dun" class="grow"></div>
+      <aside class="notes">
+        <p class="say">ELK is the famous answer: Elastic as the data store, Logstash to import logs, Kibana to view and filter. It is also overkill for us.</p>
+        <ul><li>ELK: powerful data store, imports logs from many sources, great viewer. But: it requires maintenance, is quite complicated to install and set up, and is suited mainly to large data-intensive systems. <b>No go.</b></li>
+        <li>Try raising “Powerful search” to 5 and lowering “Easy to install” to 1: ELK wins. Context decides.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 24 -->
+    <section class="slide" data-segment="dunderly" data-id="d-redund" data-title="Logging redundancy">
+      <h2><span class="kick">Case 2 · Steps 5–9 · Logging Service</span>Two instances and an “Is Alive?” check</h2>
+      <p class="sub"><b>What you see.</b> The Logging Service is a background service: it polls the queue every few seconds, validates the records and stores them. Two instances share the work. Crash one and see what the other does.</p>
+      <div data-widget="redundancy" data-case="logging" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Active / Active: both instances work, and each asks the other “Are you alive?”. When one stops answering, the other knows.</p>
+        <ul><li>Steps for any component: decide the application type, the technology stack, the architecture. Stack: .NET and SQL Server (the team’s expertise). Architecture: polling, business logic, data access, data store.</li>
+        <li>Both instances read from one queue: each record goes to exactly one instance, so there are no duplicates. Raise the load above 30/s, then crash one: backlog grows. Redundancy is not the same as capacity.</li>
+        <li>No load balancer here: the instances pull from the queue by themselves.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 25 -->
+    <section class="slide" data-segment="dunderly" data-id="d-layers" data-title="View service and layers">
+      <h2><span class="kick">Case 2 · Steps 5 and 7 · View Service and layers</span>Which type, which layers: four more components</h2>
+      <p class="sub"><b>What you see.</b> The same exercise as for Muscar. Pick a Dunderly component and its application type, then compare the traditional layers with the ones it actually has. What sits at the top of a polling service? Of a timer service?</p>
+      <div data-widget="layers" data-case="dunderly" class="grow"></div>
+      <aside class="notes">
+        <p class="say">The View Service answers browsers with static files; the .NET Core web stack is a natural fit. The others differ at the top of the stack.</p>
+        <ul>
+        <li>View Service redundancy: two instances behind a load balancer. It is stateless, so any instance can answer any request.</li>
+        <li>Application types are inferred from each component’s description in the case study.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 26 -->
+    <section class="slide" data-segment="dunderly" data-id="d-blob" data-title="Where do documents live?">
+      <h2><span class="kick">Case 2 · Step 6 · Employees Service</span>Where do the scanned documents live?</h2>
+      <p class="sub"><b>What you see.</b> Four ways to store documents (BLOBs). Describe the situation with the controls: each alternative shows what it does well and what hurts. The button “Dunderly’s situation” loads the case; “A video platform” loads the opposite.</p>
+      <div data-widget="blob" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Employee data is relational. Documents are unstructured. Where do they go?</p>
+        <ul><li>Alternatives: relational database (BLOB column), file system, object store (CEPH), cloud storage (Azure Storage Account, S3).</li>
+        <li>Decision for Dunderly: documents are small (about 1 MB), the database already exists, and documents stay part of the app (transactions, backup/DR): SQL Server.</li>
+        <li>Press “A video platform”: the ranking changes completely. Same table, different requirements.</li>
+        <li>Rule scoring in this widget is a teaching aid: it follows the pros and cons from the case study.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 27 -->
+    <section class="slide" data-segment="dunderly" data-id="d-api" data-title="Employees API">
+      <h2><span class="kick">Case 2 · Step 8 · API design</span>Employees Service: CRUD without physical delete</h2>
+      <p class="sub"><b>What you see.</b> The employee endpoints, running on a mock server with a real database table. Press DELETE and look at the table: the employee is marked, not removed. Then open the Documents tab.</p>
+      <div data-widget="api" data-tab="employees" data-only="employees,documents" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Five operations on employees, four on documents. And one rule: removing an employee is not a physical delete.</p>
+        <ul><li>Return codes: 200, 201, 400, 404.</li>
+        <li>Do we need a separate Document Handler service? Only the Employee entity needs documents, so no.</li>
+        <li><b>Design review for the class:</b> the case mixes <code>/employee/{id}</code> and <code>/employees/{id}/document…</code>. Which one would you keep, and why? (Pick one convention, plural collection names, and apply it everywhere; the mock accepts both.)</li></ul>
+      </aside>
+    </section>
+
+    <!-- 28 -->
+    <section class="slide" data-segment="dunderly" data-id="d-salary" data-title="Salary Service">
+      <h2><span class="kick">Case 2 · Step 8 · API design</span>Salary Service: a request, then an approval</h2>
+      <p class="sub"><b>What you see.</b> A manager adds a request, an HR representative approves or rejects it. Follow the status in the table. Try approving the same request twice: the slide lists no code for that, so what should the API say?</p>
+      <div data-widget="api" data-tab="salary" data-only="salary" class="grow"></div>
+      <aside class="notes">
+        <p class="say">The salary service is a small workflow: pending, then approved or rejected. The approval is its own resource: POST to <code>/salaryRequest/{id}/approval</code>.</p>
+        <ul><li>Endpoints: add, remove, get, approve, reject. Return codes 200, 400, 404.</li>
+        <li><b>Discussion:</b> approving an already approved request returns 409 in the mock; the case does not define it. A real design needs the answer. Also: creation could return 201 Created instead of 200.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 29 -->
+    <section class="slide" data-segment="dunderly" data-id="d-vac" data-title="Vacation Service">
+      <h2><span class="kick">Case 2 · Step 8 · API design</span>Vacation Service: set, get, reduce</h2>
+      <p class="sub"><b>What you see.</b> HR sets the available days with PUT, an employee reduces them with POST. Reduce more days than are left and see the response: the slide lists only 200 for this endpoint.</p>
+      <div data-widget="api" data-tab="vacation" data-only="vacation" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Two roles, three endpoints. HR sets the available vacation days; employees reduce them.</p>
+        <ul><li><code>PUT /api/v1/vacation/{empid}</code> (200, 404), <code>GET</code> (200, 404), <code>POST /{empid}/reduction</code> (200).</li>
+        <li>Why a POST to <code>/reduction</code> and not a PUT with the new number? Two people could update at once; “reduce by N” is safe to repeat in order, “set to N” overwrites. Ask students to find a case where it matters.</li>
+        <li>Redundancy: two instances behind a load balancer, like the other services.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 30 -->
+    <section class="slide" data-segment="dunderly" data-id="d-pay" data-title="Payment Interface">
+      <h2><span class="kick">Case 2 · Steps 5–9 · Payment Interface</span>Pay-day: how many copies must run?</h2>
+      <p class="sub"><b>What you see.</b> On pay-day a timer wakes the Payment Interface. It reads every salary and writes <b>one file</b>, which the old payment system reads. Each employee must be paid exactly once. Pick a design on the left, press “Month-end”, and follow the four tasks.</p>
+      <div data-widget="redundancy" data-case="payment" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Redundancy is not always “run more copies”: for a job that must run once, two active copies are a bug.</p>
+        <ul><li>Design 1, one copy: crash it, fire the timer: nobody is paid. This is why we want a second copy.</li>
+        <li>Design 2, two active copies (what worked for logging): both write the file, everyone is paid twice.</li>
+        <li>Design 3, active + passive: only one copy runs. The standby watches “Is Alive”; after 3 s of silence it becomes active. Crash the active copy and fire after the failover: still paid once.</li>
+        <li>Why logging may be Active / Active: its copies share a queue, so each record reaches exactly one copy. The Payment Interface is triggered by a timer, so nothing shares the work.</li>
+        <li>The 3 s failover, 250 employees and €3,000 average salary are simulation parameters.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 31 -->
+    <section class="slide" data-segment="dunderly" data-id="d-queue" data-title="Queue: RabbitMQ or Kafka?">
+      <h2><span class="kick">Case 2 · Step 6 · The queue</span>RabbitMQ, not Kafka</h2>
+      <p class="sub"><b>What you see.</b> The same matrix as for Muscar, with Dunderly’s weights: no data stream is involved and we want easy. Now switch to “Muscar · queue” and compare the weights.</p>
+      <div data-widget="matrix" data-preset="queue-dun" data-only="queue-dun,queue-mus" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Same candidates, opposite verdict. The scores did not change: the context did.</p>
+        <ul><li>Alternatives: self-developed, RabbitMQ (general-purpose message broker: easy to set up, easy to use), Apache Kafka (stream processing: perfect for data-intensive scenarios). Dunderly: no data stream involved, easy to use → RabbitMQ.</li>
+        <li>Ask: where else in this deck did the same technology win or lose because of context? (Node.js, the ELK stack.)</li></ul>
+      </aside>
+    </section>
+
+    <!-- 32 -->
+    <section class="slide" data-segment="dunderly" data-id="d-diag" data-title="Dunderly: three diagrams">
+      <h2><span class="kick">Case 2 · Step 10 · Diagrams</span>Logic, technical, physical</h2>
+      <p class="sub"><b>What you see.</b> The finished Dunderly architecture: one technology (.NET Core), one database (SQL Server, data and BLOBs), RabbitMQ in the middle. In the physical view crash instances and watch the status line.</p>
+      <div data-widget="diagram" data-case="dunderly" data-mode="technology" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Compare this picture with Muscar’s: far fewer technologies, far fewer moving parts. That is appropriate for the problem.</p>
+        <ul><li>Technical diagram: .NET Core services, SQL Server (data + BLOBs), RabbitMQ. Physical diagram: load balancers in front of the View, Employees, Salary and Vacation services; logging and payment interface use “Is Alive” instead.</li>
+        <li>Load balancers on the APIs are cheap insurance even though the system is not mission critical.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 33 -->
+    <section class="slide" data-segment="compare" data-id="c-compare" data-title="Side by side">
+      <h2><span class="kick">Compare</span>Same method, opposite answers</h2>
+      <p class="sub"><b>What you see.</b> Both systems side by side. Click a row to read what drives the difference. Look at the second row first.</p>
+      <div data-widget="compare" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Ten concurrent users in both cases. And still a different queue, a different database, a different language, a different redundancy plan.</p>
+        <ul><li>Revisit the predictions from the “Meet Dunderly” slide: queue? NoSQL? load balancers? Who was right?</li>
+        <li>What drives architecture: data volume and rate, criticality, the shape of the outside interface and the team’s skills. Not the number of users alone.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 34 -->
+    <section class="slide" data-segment="compare" data-id="c-decide" data-title="Practice: make the decision">
+      <h2><span class="kick">Compare · Practice</span>Which decision fits this situation?</h2>
+      <div data-widget="decide" class="grow"></div>
+      <aside class="notes">
+        <p class="say">The goal is not the right answer but the reason: what in the situation decides the choice?</p>
+        <ul><li>Run it as a vote: show the context, let the room choose by raising hands, then reveal. Ask someone to name the deciding requirement before clicking.</li>
+        <li>Questions 3 and 4 use the same candidates with opposite verdicts, as do the two storage questions: the context decides, not the technology.</li>
+        <li>The final screen lists the slides behind each miss: use it to choose what to revisit.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 35 -->
+    <section class="slide" data-segment="compare" data-id="c-ik" data-title="InstaKill: data volume">
+      <h2><span class="kick">Apply · Lab 05 Part 2</span>Do the arithmetic for your own database</h2>
+      <p class="sub"><b>What you see.</b> The data volume method applied to the InstaKill populate script: 10,000 users, 10–20 posts each, 0–10 comments and 0–20 likes per post. How many rows does the analytics view have to scan?</p>
+      <div data-widget="volume" data-case="instakill" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Muscar and Dunderly did this on a slide. You do it for your own lab data before writing a line of code.</p>
+        <ul><li>Lab 05 Part 2: populate_db.py with configurable users (default 10,000), 10–20 posts per user, 0–10 comments, 0–20 likes, created within the past week, transactions and batch inserts.</li>
+        <li>With defaults: about 150,000 posts, 750,000 comments and 1.5 million likes. That is why the lab insists that statistics are computed in SQL, not in a Python loop over rows.</li>
+        <li>Byte sizes per row are rough assumptions: check with <code>ls -lh instakill.db</code>.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 36 -->
+    <section class="slide" data-segment="compare" data-id="c-load" data-title="InstaKill: load model">
+      <h2><span class="kick">Apply · Lab 06</span>Predict before you load-test</h2>
+      <p class="sub"><b>What you see.</b> A small queueing model for the load-test experiment. SQLite lets one writer in at a time; PostgreSQL can run several. Raise the users and the share of writes and watch where each line takes off. Then compare with your Locust results.</p>
+      <div data-widget="loadmodel" class="grow"></div>
+      <aside class="notes">
+        <p class="say">Before you press “Start” in Locust, write down where you expect SQLite to break. Then measure.</p>
+        <ul><li>Lab 06 (Locust): run with 1, 2, 5 and 10 concurrent users on SQLite, record when requests fail and how the average duration grows; then switch to PostgreSQL, adapt the data-loading script, repeat, and write the analysis with screenshots.</li>
+        <li>The chart is an Erlang-C teaching model: reads parallel, writes served by 1 (SQLite) or c (PostgreSQL) workers. It shows the shape (a knee, then a wall), not your numbers.</li>
+        <li>Muscar’s NFRs said “performance is critical”; this is how you validate such a claim: with a load test.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 37 -->
+    <section class="slide" data-segment="wrap" data-id="w-lab" data-title="Lab assignment">
+      <h2><span class="kick">Wrap-up · Your work</span>Analytics and load-test assignments</h2>
+      <p class="sub"><b>What you see.</b> Four tabs: the two parts of the analytics lab and the two parts of the load-test lab, exactly as in the assignment documents.</p>
+      <div data-widget="tabs" class="grow">
+        <div data-label="Analytics" class="cols"><div class="card"><h3>Part 1 · Analytics view (frontend + backend)</h3><p class="small" style="margin-bottom:4px">For the currently logged-in user, from the current backend and SQLite data. <b>Use SQL queries</b> for the statistics (performance).</p><ul class="tight" style="font-size:16px"><li>Total posts, likes and comments <b>per week</b> (group by week of creation)</li><li><b>Top 5 posts</b> by engagement (likes + comments)</li><li><b>Like-to-comment ratio</b> for all posts combined</li><li><b>Average likes per post</b> by media type (photos vs videos)</li><li>Does the user rank in the <b>top X %</b> of users by average engagement?</li></ul></div></div>
+        <div data-label="Populate DB" class="cols"><div class="card"><h3>Part 2 · Populate the database</h3><ul class="tight" style="font-size:16px"><li><code>python populate_db.py</code>, configurable (at least the number of users)</li><li>First delete comments, likes, posts and users, <b>except alice and bob</b>; add user <b>charlie</b> (password <code>password</code>, bcrypt)</li><li>Default: <b>10,000 users</b>, 10–20 posts each, 0–10 comments and 0–20 likes per post</li><li>Random content (up to 10 words), media type photo or video, <code>faker</code> for names, text and timestamps; <code>created_on</code> within the past week</li><li>Unique usernames, valid foreign keys, <b>batch commits in one transaction</b></li></ul></div></div>
+        <div data-label="Load test" class="cols"><div class="card"><h3>Part 1 · Load testing with SQLite</h3><ul class="tight" style="font-size:16px"><li>Backend running locally, <code>pip install locust</code>, create <code>locustfile.py</code> (link in the assignment)</li><li><code>locust -f locustfile.py --host=http://localhost:8080</code>, UI at <code>localhost:8089</code></li><li>Start with <b>1 user</b>: zero fails. Then <b>2, 5, 10</b> concurrent users</li><li>Observe <b>when requests start failing</b> and how the <b>average request duration</b> changes; note the thresholds</li></ul></div></div>
+        <div data-label="PostgreSQL" class="cols"><div class="card"><h3>Part 2 · Compare with PostgreSQL</h3><ul class="tight" style="font-size:16px"><li>Switch the backend to <b>PostgreSQL</b>; adapt the data-loading script to it</li><li>Repeat the Locust tests (1, 2, 5, 10 or more users)</li><li>Compare average duration, failed requests, CPU/memory if possible</li><li>Short analysis: how does performance scale, what is the impact of the switch, <b>why</b>?</li><li>Post it on GitHub Classroom with Locust <b>Statistics and Charts</b> screenshots and your repository URL</li></ul></div></div>
+      </div>
+      <aside class="notes">
+        <p class="say">The lab is the same method on your own system: numbers first (how many rows), then a decision (SQL vs a Python loop, SQLite vs PostgreSQL), then evidence (Locust).</p>
+        <ul><li>Content taken from the lab assignment documents. The load-test document mentions <code>./gradlew bootRun</code> and port 8080 for the backend; use whatever your team’s backend uses.</li>
+        <li>Deadlines and submission details are in the assignments on Classroom.</li></ul>
+      </aside>
+    </section>
+
+    <!-- 38 -->
+    <section class="slide" data-segment="wrap" data-id="w-end" data-title="What to remember">
+      <h2><span class="kick">Wrap-up</span>Three things to remember, and a checklist</h2>
+      <p class="sub"><b>What you see.</b> The lessons of the two case studies, and a checklist you can tick against your own design. Your ticks are saved in this browser.</p>
+      <div class="cols three">
+        <div class="card"><h3>1 · Numbers first</h3><p>Turn “a lot” into messages per second, GB per day, years of retention. The numbers choose the architecture.</p></div>
+        <div class="card"><h3>2 · Context decides</h3><p>Kafka or RabbitMQ, MongoDB or SQL Server, Node.js or .NET: scores describe the technology, weights describe your context.</p></div>
+        <div class="card"><h3>3 · Plan for failure</h3><p>Stateless: instances behind a load balancer. Timers and singletons: “Is Alive” with one active copy.</p></div>
+      </div>
+      <div data-widget="checklist" class="grow"></div>
+      <aside class="notes">
+        <p class="say">If you remember three things: numbers first, context decides, plan for failure.</p>
+        <ul><li>Credit: Software Architecture Case Studies, © Memi Lavi (www.memilavi.com); the Muscar.auto and Dunderly examples come from there. Interactive material for this course.</li>
+        <li>Next: apply the checklist to InstaKill and write down your decisions as ADRs.</li></ul>
+      </aside>
+    </section>

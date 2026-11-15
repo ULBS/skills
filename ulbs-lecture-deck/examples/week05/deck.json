@@ -1,0 +1,42 @@
+{
+  "title": "Architecture Case Studies",
+  "description": "Interactive lecture: two software architecture case studies (Muscar.auto telemetry and the Dunderly HR system) with simulators, calculators and an API sandbox.",
+  "lang": "en",
+  "headerTitle": "Use Cases",
+  "storePrefix": "w5cs.",
+  "footerHtml": "Case studies adapted from Memi Lavi, <i>Software Architecture Case Studies</i> (memilavi.com)",
+  "helpNote": "Every simulator and calculator runs in your browser. Numbers marked as teaching models (capacities, scores, the queueing chart) are illustrative; the figures from the case studies (messages per second, GB, prices, API paths) come from the case studies. Case studies adapted from Memi Lavi, Software Architecture Case Studies (www.memilavi.com).",
+  "segments": [
+    {
+      "id": "intro",
+      "label": "Opening",
+      "color": "--navy"
+    },
+    {
+      "id": "muscar",
+      "label": "Case 1 · Muscar.auto",
+      "color": "--teal"
+    },
+    {
+      "id": "dunderly",
+      "label": "Case 2 · Dunderly",
+      "color": "--gold"
+    },
+    {
+      "id": "compare",
+      "label": "Compare & apply",
+      "color": "--purple"
+    },
+    {
+      "id": "wrap",
+      "label": "Wrap-up",
+      "color": "--green"
+    }
+  ],
+  "widgets": [
+    "calculators",
+    "diagrams-sims",
+    "api-quiz",
+    "sorter-brief"
+  ]
+}

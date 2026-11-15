@@ -1,0 +1,43 @@
+<!-- Copy blocks into <project>/slides.html. Keep data-segment values equal to deck.json segment ids. -->
+
+<!-- 1. Title slide -->
+<section class="slide title" data-segment="intro" data-id="title" data-title="Topic title">
+  <img class="logo-big" src="{{LOGO}}" alt="Universitatea Lucian Blaga din Sibiu">
+  <h2 style="font-size:16px;letter-spacing:2px;text-transform:uppercase;color:#aac4ee">Course · Topic</h2>
+  <h1>Main title</h1>
+  <p>Two sentences that make the students curious.</p>
+  <div class="meta">topic · topic · topic</div>
+  <div class="hints"><span><kbd>←</kbd> <kbd>→</kbd> navigate</span><span><kbd>N</kbd> notes</span><span><kbd>G</kbd> all slides</span><span>hover a button: tooltip</span><span><kbd>?</kbd> help</span></div>
+  <aside class="notes"><p class="say">Opening line.</p><ul><li>The contrast to open with, what students will do in the lab.</li></ul></aside>
+</section>
+
+<!-- 2. Widget slide -->
+<section class="slide" data-segment="topicA" data-id="a-decision" data-title="Decision">
+  <h2><span class="kick">Topic A · Step 3</span>A question as headline</h2>
+  <p class="sub"><b>What you see.</b> What is on screen and what to press.</p>
+  <div data-widget="matrix" data-preset="my-decision" class="grow"></div>
+  <aside class="notes"><p class="say">Talk track.</p><ul><li>Answer to the prediction. A trap to mention. Question for the room.</li></ul></aside>
+</section>
+
+<!-- 3. Cards slide (no widget) -->
+<section class="slide" data-segment="topicA" data-id="a-cards" data-title="Two columns">
+  <h2><span class="kick">Topic A</span>Headline</h2>
+  <p class="sub"><b>What you see.</b> Two lists to compare.</p>
+  <div class="cols two grow">
+    <div class="card big"><h3>Left</h3><ul class="tight"><li>point</li><li>point</li></ul></div>
+    <div class="card big"><h3>Right</h3><ul class="tight"><li>point</li><li>point</li></ul>
+      <div class="callout gold" style="margin-top:10px;font-size:15px"><b>Predict:</b> a question to answer before the next slide.</div></div>
+  </div>
+  <aside class="notes"><p class="say">Talk track.</p></aside>
+</section>
+
+<!-- 4. Tabs slide (e.g. lab requirements) -->
+<section class="slide" data-segment="wrap" data-id="w-lab" data-title="Lab assignment">
+  <h2><span class="kick">Wrap-up</span>Lab requirements</h2>
+  <p class="sub"><b>What you see.</b> One tab per lab.</p>
+  <div data-widget="tabs" class="grow">
+    <div data-label="Lab A"><ul class="tight"><li>requirement</li></ul></div>
+    <div data-label="Lab B"><ul class="tight"><li>requirement</li></ul></div>
+  </div>
+  <aside class="notes"><p class="say">Remind the deadline.</p></aside>
+</section>

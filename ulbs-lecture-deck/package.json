@@ -1,0 +1,14 @@
+{
+  "name": "ulbs-lecture-deck",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build and test interactive ULBS HTML lecture decks.",
+  "author": "Cantemir Mihu <cantemir.mihu@ulbsibiu.ro>",
+  "license": "MIT",
+  "scripts": {
+    "test:deck": "node scripts/test-deck.js"
+  },
+  "devDependencies": {
+    "playwright": "1.55.0"
+  }
+}

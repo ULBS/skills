@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{DESCRIPTION}}">
+<link rel="icon" href="{{FAVICON}}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+{{CSS}}
+</style>
+</head>
+<body>
+<div class="viewport">
+<div class="stage" id="stage">
+
+  <header class="chrome">
+    <img class="logo" src="{{LOGO_URI}}" alt="Universitatea Lucian Blaga din Sibiu">
+    <span class="deck-title">{{HEADER_TITLE}}</span>
+    <span class="chip" id="seg-chip">{{FIRST_CHIP}}</span>
+    <span class="spacer"></span>
+    <div class="tools">
+      <button class="tool" id="btn-prev" aria-label="Previous slide">◀</button>
+      <button class="tool" id="btn-next" aria-label="Next slide">▶</button>
+      <span class="zoomctl" role="group" aria-label="Zoom content">
+        <button class="tool" id="btn-zoom-out" aria-label="Zoom out" title="Zoom out (−)">−</button>
+        <button class="tool" id="btn-zoom-reset" aria-label="Reset zoom" title="Reset zoom (0)">100%</button>
+        <button class="tool" id="btn-zoom-in" aria-label="Zoom in" title="Zoom in (+)">+</button>
+      </span>
+      <button class="tool" id="btn-overview">Slides</button>
+      <button class="tool" id="btn-notes">Notes</button>
+      <button class="tool" id="btn-full">Full</button>
+      <button class="tool" id="btn-help">?</button>
+    </div>
+    <div id="progress"><div id="progress-bar"></div></div>
+  </header>
+
+  <main class="slides">
+{{SLIDES}}
+  </main>
+
+  <footer class="foot">
+    <span>{{FOOTER}}</span>
+    <span id="counter">1 / {{COUNT}}</span>
+  </footer>
+
+  <div id="tip" role="tooltip"></div>
+  <aside id="notes" class="overlay" aria-hidden="true" aria-label="Speaker notes">
+    <button class="btn ghost small close" data-close="notes" aria-label="Close notes">Close</button>
+    <div id="notes-body"></div>
+  </aside>
+  <section id="overview" class="overlay" aria-hidden="true" aria-label="All slides">
+    <button class="btn ghost small close" data-close="overview" aria-label="Close overview">Close</button>
+    <h2 style="margin-bottom:12px">All slides</h2>
+    <div id="overview-grid"></div>
+  </section>
+  <section id="help" class="overlay" aria-hidden="true" aria-label="Keyboard help">
+    <button class="btn ghost small close" data-close="help" aria-label="Close help">Close</button>
+    <h2 style="margin-bottom:14px">Keyboard</h2>
+    <dl>
+      <dt><kbd>←</kbd> <kbd>→</kbd> / <kbd>PgUp</kbd> <kbd>PgDn</kbd></dt><dd>previous / next slide</dd>
+      <dt><kbd>Space</kbd> / <kbd>Shift</kbd>+<kbd>Space</kbd></dt><dd>next / previous</dd>
+      <dt><kbd>Home</kbd> <kbd>End</kbd></dt><dd>first / last slide</dd>
+      <dt><kbd>G</kbd></dt><dd>overview of all slides</dd>
+      <dt><kbd>N</kbd></dt><dd>speaker notes for the current slide</dd>
+      <dt><kbd>+</kbd> <kbd>−</kbd> <kbd>0</kbd></dt><dd>zoom the slide content in / out / reset (also <kbd>Ctrl</kbd>+wheel; scroll the slide when zoomed in)</dd>
+      <dt><kbd>F</kbd></dt><dd>full screen</dd>
+      <dt><kbd>Esc</kbd></dt><dd>close overlays</dd>
+    </dl>
+    <p class="small" style="margin-top:18px;max-width:760px">{{HELP_NOTE}}</p>
+  </section>
+
+</div>
+</div>
+
+<script>
+{{JS}}
+</script>
+</body>
+</html>
