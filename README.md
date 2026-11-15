@@ -1,6 +1,6 @@
 # ULBS Skills
 
-Reusable Codex skills maintained by ULBS.
+Reusable agent skills maintained by ULBS.
 
 ## Included skills
 
