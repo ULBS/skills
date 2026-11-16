@@ -34,9 +34,8 @@
     }
   ],
   "widgets": [
-    "calculators",
-    "diagrams-sims",
-    "api-quiz",
+    "basics",
+    "diagram-matrix",
     "sorter-brief"
   ]
 }

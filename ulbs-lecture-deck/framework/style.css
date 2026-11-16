@@ -200,8 +200,8 @@ svg text { font-family: var(--font); }
 .slide.compact { gap: 8px; padding-top: 20px; }
 .slide h2 { font-size: 30px; }
 .pill { display: inline-block; font: 700 12px var(--font); padding: 2px 9px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); color: var(--accent); }
-.pill.mus { background: #dff6f7; border-color: #9edde1; color: #0b6d73; }
-.pill.dun { background: #fff0d4; border-color: #f2d49b; color: #8a5500; }
+.pill.teal { background: #dff6f7; border-color: #9edde1; color: #0b6d73; }
+.pill.gold { background: #fff0d4; border-color: #f2d49b; color: #8a5500; }
 .pill.ok { background: #e6f5d6; border-color: #b4dc84; color: #2d6a00; }
 .pill.bad { background: #fde4e6; border-color: #f2a6ac; color: #a40f1b; }
 .pill.warn { background: #fff4de; border-color: #f2d49b; color: #8a5500; }

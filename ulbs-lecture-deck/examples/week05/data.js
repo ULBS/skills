@@ -43,7 +43,7 @@ DeckData.matrix = {
 
 DeckData.brief = {
     muscar: {
-      from: 'Muscar.auto', role: 'Head of Engineering', subject: 'Telemetry for our autonomous cars', tag: 'mus',
+      from: 'Muscar.auto', role: 'Head of Engineering', subject: 'Telemetry for our autonomous cars', tag: 'teal',
       mail: [
         ['We make ', ['biz', 'autonomous systems for vehicles'], '. Today there are ', ['fleet', 'more than 10,000 cars'], ' on the road, and we expect ', ['grow', 'over 200,000'], ' by the end of the year.'],
         ['Every car reports ', ['tele', 'telemetry'], ': location, speed, breakdowns. We need to ', ['rel', 'reliably receive'], ' all of it, ', ['store', 'store it'], ', and ', ['dash', 'show it on dashboards'], '.'],
@@ -63,7 +63,7 @@ DeckData.brief = {
       },
     },
     dunderly: {
-      from: 'Dunderly', role: 'HR Manager', subject: 'New HR system', tag: 'dun',
+      from: 'Dunderly', role: 'HR Manager', subject: 'New HR system', tag: 'gold',
       mail: [
         ['We are Dunderly. We sell ', ['biz', 'paper supplies'], ': printer paper, envelopes and more. We need a new ', ['web', 'web based'], ' HR system.'],
         ['The HR department must ', ['crud', 'create, read, update and delete employees'], '. When a manager wants a salary change, the HR manager must ', ['appr', 'approve or reject'], ' it. We also need to ', ['vac', 'manage vacation days'], '.'],
@@ -141,3 +141,61 @@ DeckData.decide = [
     driver: 'Scores describe the technologies; the weights describe the context. When the context changes, change the weights.',
     opts: [['Keep the result: the matrix was already approved', 0, 'The context changed; a decision is only as good as its inputs.'], ['Raise the weight of performance (it is now critical), re-run the matrix, and explain the new result', 1, 'The weights capture the context. A hard latency limit makes performance far more important.'], ['Delete the performance criterion so the result stays', 0, 'Hiding a requirement does not remove it.'], ['Pick the language you personally prefer', 0, 'A matrix exists to make the reasoning visible and discussable.']] },
 ];
+
+/* method ladder, client interviews, side-by-side comparison */
+DeckData.method = [
+    ['Requirements', 'What must the system do? Functional vs non-functional.', 'm-req', '--navy'],
+    ['Ask about NFRs', 'Users, messages, sizes, loss, SLA: the questions that shape everything.', 'm-ask', '--navy'],
+    ['Data volume', 'Do the arithmetic. Decide how long data is kept.', 'm-vol', '--blue'],
+    ['Components', 'Split into pieces and choose how they talk (TCP, queue, REST, file).', 'm-comp', '--blue'],
+    ['Application type', 'Per component: web, mobile, console, service or desktop?', 'm-gw', '--purple'],
+    ['Technology stack', 'Build or buy? Fit the load, the team and the environment.', 'm-pipe', '--purple'],
+    ['Internal layers', 'Service interface, business logic, data access, data store.', 'm-layers', '--teal'],
+    ['API design', 'Paths, verbs and return codes for the endpoints.', 'm-viewer', '--teal'],
+    ['Redundancy', 'No single point of failure: load balancer or is-alive check.', 'm-redund', '--gold'],
+    ['Three diagrams', 'Logic, technical, physical: the same system, three views.', 'm-diag', '--gold'],
+];
+
+DeckData.interview = {
+  muscar: {
+    color: '--teal',
+    q: [
+      ['How many concurrent users?', '10', 'Users', '10 users', 'Very few users: the UI tier does not need to scale. The hard part is somewhere else.'],
+      ['How many telemetry messages per second?', '7,000 per second', 'Messages', '7,000 / s', 'This is the number that shapes the whole system: it hits the gateway every second, all day.'],
+      ['What is the average size of a message?', '1 KB', 'Message size', '1 KB', '7,000 × 1 KB = 7 MB every second. Next slide: what that becomes in a day and a year.'],
+      ['Is the message schema-less?', 'Yes', 'Schema', 'schema-less', 'Different car models report different fields, so a rigid table schema would fight us: look at document-style stores.'],
+      ['Can we tolerate some message loss?', 'Sort of…', 'Message loss', 'a little, not for alarms', 'A few lost position pings are acceptable, a lost breakdown alarm is not. Never drop silently.'],
+      ['What is the desired SLA?', 'Highest possible', 'SLA', 'highest possible', 'Mission critical: every component needs redundancy, so that no single failure stops telemetry.'],
+    ],
+    sum: ['Data intensive, not many users', 'Performance is important', 'Mission critical'],
+  },
+  dunderly: {
+    color: '--gold',
+    q: [
+      ['How many concurrent users?', '10', 'Users', '10 users', 'The same number as Muscar! Users alone do not decide how complex a system gets.'],
+      ['How many employees?', '250 today, 500 in five years', 'Employees', '250 → 500', 'A tiny dataset. A single relational database will do; no sharding, no streams.'],
+      ['What do we know about the external payment system?', 'Legacy system written in C++, in the company server farm. Input: only files, one file per month.', 'Payment system', 'legacy, file once a month', 'No API to call: we must produce a file once a month. That is a timer-driven batch job, not a web service.'],
+      ['How much data does one employee need?', 'About 1 MB of records plus about 10 scanned documents of about 5 MB each', 'Data / employee', '≈ 51 MB', 'Scanned documents dominate the volume, so we need a plan for storing documents.'],
+      ['How critical is the system?', 'Not very critical', 'SLA', 'not very critical', 'No mission-critical promises: keep it simple, redundancy is cheap insurance but not a core driver.'],
+      ['What does the team know?', 'The Microsoft stack: expert in .NET and SQL Server', 'Team skills', '.NET + SQL Server', 'Technology follows people: the stack the team already masters is a requirement too.'],
+    ],
+    sum: ['Classic information system', 'Not a lot of users, not a lot of data', 'Interface to an external system'],
+  },
+};
+
+DeckData.compare = {
+  start: 1,
+  cols: [['Muscar.auto', '#0b6d73'], ['Dunderly', '#8a5500']],
+  rows: [
+      ['Type of system', 'Data intensive: a stream of telemetry', 'Classic information system: CRUD and a workflow', 'Name the type first: it tells you where the hard problems are.'],
+      ['Concurrent users', '10', '10', 'Identical! The number of users is NOT what makes Muscar hard. Volume and criticality are.'],
+      ['Load / data', '7,000 msgs/s ≈ 605 GB a day, 221 TB a year', '250 → 500 employees ≈ 25.5 GB in total', 'Muscar writes Dunderly’s five-year total about every hour.'],
+      ['Criticality (SLA)', 'Mission critical, performance critical', 'Not very critical', 'Criticality decides how much redundancy you pay for.'],
+      ['Outside world', 'Cars over TCP; ETL to archive and warehouse', 'Legacy C++ system: one file a month', 'The shape of the interface (stream vs file) decides the shape of the component.'],
+      ['Queue', 'Kafka (stream processing, massive volume)', 'RabbitMQ (simple, easy)', 'Same job, opposite choice: the context changed the weights.'],
+      ['Data store', 'MongoDB (schema-less) + cloud archive', 'SQL Server (relational + BLOBs)', 'Schema-less messages vs relational records with documents.'],
+      ['Platform', 'Node.js on Linux', '.NET Core on the Microsoft stack', 'Technology follows the team’s skills and the environment.'],
+      ['Redundancy', 'Load balancer and several instances on every tier', 'LB for the APIs, “Is Alive” for logging and payment', 'Redundancy matches the SLA, and the nature of the component.'],
+      ['Retention / BI', '1 week operational, aggregated forever, BI expert', 'Not an issue at 25.5 GB, no BI', 'Retention exists because the data is huge.'],
+  ],
+};

@@ -1,32 +1,43 @@
 # Widget catalog
 
-Placeholder: `<div data-widget="NAME" data-...="..." class="grow"></div>`. Library file in brackets.
+Placeholder: `<div data-widget="NAME" data-...="..." class="grow"></div>`.
 
-| Widget | Use it to | Attributes | Content lives in |
+## Library (`<skill>/widgets/`, always available, content from `DeckData`)
+
+List the files in `deck.json` `widgets`: `["basics", "diagram-matrix", "sorter-brief"]`.
+
+| Widget | Use it to | Attributes | Content |
 |---|---|---|---|
-| `tabs` [calculators] | switch between panes on one slide | children with `data-label` | the slide HTML |
-| `method` [calculators] | clickable ladder of the method's steps, each linking to a slide | none | embedded (edit steps and slide ids) |
-| `fleet` [calculators] | canvas with a stream of messages, slider for the number of senders | none | embedded, adapt |
-| `interview` [calculators] | click the client questions, a requirements sheet fills in | `data-case` | embedded `INTERVIEWS` |
-| `volume` [calculators] | msgs/s x size x time = GB/TB, presets per case | `data-case` | embedded presets |
-| `retention` [calculators] | days kept hot vs archived, calendar, Reset | none | embedded |
-| `cloud` [calculators] | tiered price calculator | none | embedded prices |
-| `checklist` [calculators] | tick list saved in localStorage | none | `DeckData.checklist` |
-| `diagram` [diagrams-sims] | architecture in 4 views (components, messaging, technology, physical), click a box for reasons, crash replicas | `data-case`, `data-mode` | `DeckData.diagram` |
-| `matrix` [diagrams-sims] | weighted decision matrix: weight sliders, clickable scores, winner bar, Reset | `data-preset`, `data-only="a,b"` | `DeckData.matrix` |
-| `pipeline` [diagrams-sims] | live producer -> queue -> consumer simulator (crash, rush hour, queue on/off) | none | embedded parameters |
-| `redundancy` [diagrams-sims] | `logging`: two active copies sharing a queue; `payment`: pay-day simulator (1 copy / 2 active / active+passive, crash a copy, fire the timer, 4 guided tasks with ticks) | `data-case="logging"` or `"payment"` | embedded |
-| `api` [api-quiz] | mock REST server with state, editable path, Send, status codes | `data-tab` | embedded `EPS`, `makeServer` |
-| `layers` [api-quiz] | application-type quiz + layer stacks | `data-case` | embedded |
-| `bi` [api-quiz] | sort questions: viewer vs BI | none | embedded |
-| `blob` [api-quiz] | storage chooser with checklist | none | embedded |
-| `compare` [api-quiz] | side-by-side comparison table | none | embedded |
-| `loadmodel` [api-quiz] | Erlang C queue chart, 1 writer vs N writers | none | embedded |
-| `sorter` [sorter-brief] | put items into two boxes with feedback and score | `data-case` | `DeckData.sorter` |
-| `decide` [sorter-brief] | scenario quiz: a new situation, 4 options, feedback on every option, "what decides", score by skill, links to slides to revisit | none | `DeckData.decide` (`{area, link:[slideId,label], ctx, q, driver, opts:[[text, 1|0, why]]}`) |
+| `tabs` [basics] | switch between panes on one slide | children with `data-label` | the slide HTML |
+| `method` [basics] | clickable ladder of the method's steps, each linking to a slide | none | `DeckData.method = [[title, desc, slideId, '--colour'], ...]` |
+| `interview` [basics] | click the client questions, a requirements sheet fills in | `data-case` | `DeckData.interview = {case: {color, q: [[question, answer, label, short, soWhat], ...], sum: [known, ...]}}` |
+| `compare` [basics] | side-by-side table, click a row for what drives the difference | none | `DeckData.compare = {start, cols: [[name, headerBg], ...], rows: [[criterion, ...cell per col, why], ...]}` |
+| `checklist` [basics] | tick list saved in localStorage | none | `DeckData.checklist = [text, ...]` |
+| `diagram` [diagram-matrix] | architecture in 4 views (components, messaging, technology, physical), click a box for reasons, crash replicas | `data-case`, `data-mode` | `DeckData.diagram` |
+| `matrix` [diagram-matrix] | weighted decision matrix: weight sliders, clickable scores, winner bar, Reset | `data-preset`, `data-only="a,b"` | `DeckData.matrix` |
+| `sorter` [sorter-brief] | sort items into functional / non-functional with feedback and score | `data-case` | `DeckData.sorter` |
 | `brief` [sorter-brief] | fictional client e-mail with clickable phrases + fact sheet | `data-case` | `DeckData.brief` |
+| `decide` [sorter-brief] | scenario quiz: a new situation, 4 options, feedback on every option, "what decides", score by skill, links to slides to revisit | none | `DeckData.decide` (`{area, link:[slideId,label], ctx, q, driver, opts:[[text, 1\|0, why]]}`) |
 
-"Embedded" widgets can carry example-specific content inside the JS. For another topic, **copy the closest widget into `<project>/widgets/<name>.js`, rename it (`Deck.register('newname', ...)`) and replace the content**; keep the structure, controls and styling. Add the file name to nothing: files in `<project>/widgets/` are included automatically. If a copied file reuses a registered name, the later file wins.
+Without `data-case` / `data-preset` a widget uses the first key of its `DeckData` object.
+
+## Topic widgets (`examples/week05/widgets/`, content embedded)
+
+Written for the week 5 case studies; numbers, labels and presets are inside the JS. They are **not** in the library: to use one, **copy it into `<project>/widgets/<name>.js`, rename it (`Deck.register('newname', ...)`) and replace the content**; keep the structure, controls and styling. Files in `<project>/widgets/` are included automatically (no entry in `deck.json`). If a copied file reuses a registered name, the later file wins.
+
+| Widget | File | Pattern it shows |
+|---|---|---|
+| `fleet` | case-calculators | animated canvas stream, one slider, KPI tiles |
+| `volume` | case-calculators | sliders + presets -> KPI tiles and a budget meter (`data-case`) |
+| `retention` | case-calculators | day calendar with hot / archived days, step buttons, Reset |
+| `cloud` | case-calculators | tiered price calculator with bar per tier |
+| `pipeline` | case-sims | live producer -> queue -> consumer simulator (crash, burst, queue on/off) |
+| `redundancy` | case-sims | `logging`: two active copies on a queue; `payment`: timer job with 1 copy / active-active / active-passive and guided tasks |
+| `api` | case-api-quiz | mock REST server with state, editable path, Send, status codes (`data-tab`, `data-only`) |
+| `layers` | case-api-quiz | application-type quiz that unlocks a layer stack (`data-case`) |
+| `bi` | case-api-quiz | two-bucket question sorting with score |
+| `blob` | case-api-quiz | option chooser scored against a checklist of conditions |
+| `loadmodel` | case-api-quiz | queueing chart (Erlang C), 1 writer vs N writers |
 
 ## Widget API (engine)
 
@@ -48,5 +59,5 @@ Placeholder: `<div data-widget="NAME" data-...="..." class="grow"></div>`. Libra
 - Timer-redrawn SVG: attach handlers with `onpointerdown`, not `onclick`.
 - `U.store.get(k, default)` / `.set(k, v)`: localStorage wrapped in try/catch, prefixed with `storePrefix` from deck.json.
 - Jump to another slide: `Deck.gotoId('id')`.
-- Databases in SVG diagrams are cylinders (`cyl()` in `diagrams-sims.js`): node `kind: 'store'`.
+- Databases in SVG diagrams are cylinders (`cyl()` in `diagram-matrix.js`): node `kind: 'store'`.
 - Diagram messaging view: arrows carry NO text (labels were unreadable on curved lines); the legend above the diagram names each arrow colour and dash style. Arrowheads have a fixed pixel size (`markerUnits: userSpaceOnUse`), independent of line width.

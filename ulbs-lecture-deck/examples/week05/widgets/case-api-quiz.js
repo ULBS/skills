@@ -1,6 +1,6 @@
-/* Widgets part 3: API sandbox, layers, BI sorting, blob storage chooser, compare, load model */
+/* Week 5 widgets (content embedded): API sandbox, layers, BI sorting, blob storage chooser, load model */
 (function () {
-  const { h, s, fmt, size, slider, seg } = U;
+  const { h, s, fmt, size, money, slider, seg } = U;
 
   // ================================================================ API sandbox
   const EPS = {
@@ -197,30 +197,6 @@
     function rebuild() { sl.querySelector('input').value = String(Math.round((Math.log10(S.mb) + 1) / 5 * 100)); sl.querySelector('output').textContent = fmtMB(S.mb); ctrl.replaceChildren(h('h3', {}, 'Describe the situation'), sl, cb('tx', 'The document must be saved in the same transaction as the employee record', 'If the row is saved, the document must be saved too, or both fail.'), cb('net', 'An internet connection is always available', 'Cloud storage needs the internet.'), cb('exp', 'The team has storage-engineering expertise', 'Object stores need dedicated knowledge.'), cb('cost', 'There is budget for monthly cloud fees', 'Cloud storage is pay-as-you-go.'), cb('scale', 'Massive scale: millions of documents', 'Great scale is where files in a database stop making sense.'), h('div', { class: 'row' }, dun, big)); draw(); }
     node.append(h('div', { class: 'cols two', style: { gridTemplateColumns: '.9fr 1.3fr', alignItems: 'start' } }, ctrl, out));
     rebuild();
-  });
-
-  // ================================================================ compare
-  Deck.register('compare', (node) => {
-    const R = [
-      ['Type of system', 'Data intensive: a stream of telemetry', 'Classic information system: CRUD and a workflow', 'Name the type first: it tells you where the hard problems are.'],
-      ['Concurrent users', '10', '10', 'Identical! The number of users is NOT what makes Muscar hard. Volume and criticality are.'],
-      ['Load / data', '7,000 msgs/s ≈ 605 GB a day, 221 TB a year', '250 → 500 employees ≈ 25.5 GB in total', 'Muscar writes Dunderly’s five-year total about every hour.'],
-      ['Criticality (SLA)', 'Mission critical, performance critical', 'Not very critical', 'Criticality decides how much redundancy you pay for.'],
-      ['Outside world', 'Cars over TCP; ETL to archive and warehouse', 'Legacy C++ system: one file a month', 'The shape of the interface (stream vs file) decides the shape of the component.'],
-      ['Queue', 'Kafka (stream processing, massive volume)', 'RabbitMQ (simple, easy)', 'Same job, opposite choice: the context changed the weights.'],
-      ['Data store', 'MongoDB (schema-less) + cloud archive', 'SQL Server (relational + BLOBs)', 'Schema-less messages vs relational records with documents.'],
-      ['Platform', 'Node.js on Linux', '.NET Core on the Microsoft stack', 'Technology follows the team’s skills and the environment.'],
-      ['Redundancy', 'Load balancer and several instances on every tier', 'LB for the APIs, “Is Alive” for logging and payment', 'Redundancy matches the SLA, and the nature of the component.'],
-      ['Retention / BI', '1 week operational, aggregated forever, BI expert', 'Not an issue at 25.5 GB, no BI', 'Retention exists because the data is huge.'],
-    ];
-    let sel = 1;
-    const tb = h('table', { class: 't' }), note = h('div', { class: 'answer', style: { '--chip': 'var(--purple)' } });
-    function draw() {
-      tb.replaceChildren(h('tr', {}, h('th', { style: { width: '17%' } }, ''), h('th', { style: { background: '#0b6d73' } }, 'Muscar.auto'), h('th', { style: { background: '#8a5500' } }, 'Dunderly')), ...R.map((r, i) => h('tr', { class: 'cmp-row' + (i === sel ? ' on' : ''), tabindex: 0, 'data-tip': 'Click to see what drives this difference.', onclick: () => { sel = i; draw(); }, onkeydown: (e) => { if (e.key === 'Enter') { sel = i; draw(); } } }, h('td', {}, h('b', {}, r[0])), h('td', {}, r[1]), h('td', {}, r[2]))));
-      note.replaceChildren(h('b', {}, R[sel][0] + ': '), R[sel][3]);
-    }
-    node.append(h('div', { class: 'flexcol', style: { gap: '8px' } }, tb, note));
-    draw();
   });
 
   // ================================================================ load model (week 6)
