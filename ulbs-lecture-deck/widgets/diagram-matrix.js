@@ -9,7 +9,7 @@
   };
   const DIAG = DeckData.diagram || {};
 
-  Deck.register('diagram', (node, ds) => {
+  Deck.register('architecture-diagram', (node, ds) => {
     const D = DIAG[ds.case || Object.keys(DIAG)[0]];
     const byId = Object.fromEntries(D.nodes.map((n) => [n.id, n]));
     let mode = ds.mode || 'components', sel = null;

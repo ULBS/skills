@@ -13,7 +13,7 @@ List the files in `deck.json` `widgets`: `["basics", "diagram-matrix", "sorter-b
 | `interview` [basics] | click the client questions, a requirements sheet fills in | `data-case` | `DeckData.interview = {case: {color, q: [[question, answer, label, short, soWhat], ...], sum: [known, ...]}}` |
 | `compare` [basics] | side-by-side table, click a row for what drives the difference | none | `DeckData.compare = {start, cols: [[name, headerBg], ...], rows: [[criterion, ...cell per col, why], ...]}` |
 | `checklist` [basics] | tick list saved in localStorage | none | `DeckData.checklist = [text, ...]` |
-| `diagram` [diagram-matrix] | architecture in 4 views (components, messaging, technology, physical), click a box for reasons, crash replicas | `data-case`, `data-mode` | `DeckData.diagram` |
+| `architecture-diagram` [diagram-matrix] | software architecture in 4 views (components, messaging, technology, physical), click a box for reasons, crash replicas | `data-case`, `data-mode` | `DeckData.diagram` |
 | `matrix` [diagram-matrix] | weighted decision matrix: weight sliders, clickable scores, winner bar, Reset | `data-preset`, `data-only="a,b"` | `DeckData.matrix` |
 | `sorter` [sorter-brief] | sort items into two boxes with feedback and score (default boxes: functional / non-functional) | `data-case` | `DeckData.sorter = {case: [[text, 'f'\|'n', why], ...]}` or `{case: {boxes: {a: [title, button, tip], b: [...]}, tip, items: [[text, 'a'\|'b', why], ...]}}` |
 | `brief` [sorter-brief] | fictional client e-mail with clickable phrases + fact sheet | `data-case` | `DeckData.brief` |
@@ -35,7 +35,7 @@ DeckData.labels = {
 };
 ```
 
-`interview` and `brief` also accept `labels: {...}` inside one case (wins over `DeckData.labels`). `sorter` has its own `boxes` / `tip` per case. `diagram` stays architecture-specific (4 fixed views, load balancers, edge types TCP / REST / queue / file / ETL).
+`interview` and `brief` also accept `labels: {...}` inside one case (wins over `DeckData.labels`). `sorter` has its own `boxes` / `tip` per case. `architecture-diagram` stays architecture-specific (4 fixed views, load balancers, edge types TCP / REST / queue / file / ETL).
 
 ## Topic widgets (`examples/week05/widgets/`, content embedded)
 

@@ -141,7 +141,7 @@
     <section class="slide" data-segment="muscar" data-id="m-comp" data-title="Components and messaging">
       <h2><span class="kick">Case 1 · Step 4 · Components and messaging</span>From requirements to boxes</h2>
       <p class="sub"><b>What you see.</b> The Muscar system as components. Start on “Components”, then press “Messaging” to see how they talk (TCP, queue, ETL). Click a box to read why it exists.</p>
-      <div data-widget="diagram" data-case="muscar" data-mode="components" class="grow"></div>
+      <div data-widget="architecture-diagram" data-case="muscar" data-mode="components" class="grow"></div>
       <aside class="notes">
         <p class="say">Each requirement becomes a component: receive telemetry (gateway), queue it (pipeline), validate and store it (processor), query it (viewer), analyze it (warehouse + BI), archive it.</p>
         <ul><li>Components: Telemetry Gateway, Telemetry Pipeline, Telemetry Processor, Operational DB, Telemetry Viewer, Data Warehouse, BI Application, Archive DB.</li>
@@ -258,7 +258,7 @@
     <section class="slide" data-segment="muscar" data-id="m-diag" data-title="Muscar: three diagrams">
       <h2><span class="kick">Case 1 · Step 10 · Diagrams</span>Logic, technical, physical</h2>
       <p class="sub"><b>What you see.</b> The finished Muscar architecture. Switch between the views: components (logic), technology (technical) and physical. In the physical view, click instances to crash them and watch which tiers survive.</p>
-      <div data-widget="diagram" data-case="muscar" data-mode="physical" class="grow"></div>
+      <div data-widget="architecture-diagram" data-case="muscar" data-mode="physical" class="grow"></div>
       <aside class="notes">
         <p class="say">One system, three pictures for three audiences: what it is, what it is built with, how it is deployed.</p>
         <ul><li>The logic diagram has the components; the technical diagram adds Node.js, Kafka, MongoDB and Azure Storage (the warehouse and BI are “???” until the BI expert chooses); the physical diagram adds the load balancers and instances.</li>
@@ -321,7 +321,7 @@
     <section class="slide" data-segment="dunderly" data-id="d-comp" data-title="Components and messaging">
       <h2><span class="kick">Case 2 · Step 4 · Components and messaging</span>Services, one shared data store, one file out</h2>
       <p class="sub"><b>What you see.</b> Dunderly as components. The messaging view shows REST over HTTP between browser and services, a queue towards logging, and a file to the legacy payment system. Click the boxes.</p>
-      <div data-widget="diagram" data-case="dunderly" data-mode="messaging" class="grow"></div>
+      <div data-widget="architecture-diagram" data-case="dunderly" data-mode="messaging" class="grow"></div>
       <aside class="notes">
         <p class="say">Entities: employees, vacation, salary. Each gets a service. Plus a view service, logging, a payment interface and a shared data store.</p>
         <ul><li>Question: single data store or one per service? Answer: the data is shared between services, so a <b>single data store</b> is better.</li>
@@ -450,7 +450,7 @@
     <section class="slide" data-segment="dunderly" data-id="d-diag" data-title="Dunderly: three diagrams">
       <h2><span class="kick">Case 2 · Step 10 · Diagrams</span>Logic, technical, physical</h2>
       <p class="sub"><b>What you see.</b> The finished Dunderly architecture: one technology (.NET Core), one database (SQL Server, data and BLOBs), RabbitMQ in the middle. In the physical view crash instances and watch the status line.</p>
-      <div data-widget="diagram" data-case="dunderly" data-mode="technology" class="grow"></div>
+      <div data-widget="architecture-diagram" data-case="dunderly" data-mode="technology" class="grow"></div>
       <aside class="notes">
         <p class="say">Compare this picture with Muscar’s: far fewer technologies, far fewer moving parts. That is appropriate for the problem.</p>
         <ul><li>Technical diagram: .NET Core services, SQL Server (data + BLOBs), RabbitMQ. Physical diagram: load balancers in front of the View, Employees, Salary and Vacation services; logging and payment interface use “Is Alive” instead.</li>
