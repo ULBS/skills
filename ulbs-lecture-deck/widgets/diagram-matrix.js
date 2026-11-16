@@ -131,6 +131,7 @@
   const MX = DeckData.matrix || {};
   Deck.register('matrix', (node, ds) => {
     let key = ds.preset || Object.keys(MX)[0], P, W, SC;
+    const L = U.labels('matrix', { weights: 'Weights: how much each criterion matters here (0–5)', weightTip: 'How important is this criterion in this context?', scores: 'Scores (click to change)', scoreTip: 'Score of this technology for this criterion (1 = poor, 5 = excellent). Click to change.', result: 'Weighted result', takeaway: 'Takeaway: ' });
     const only = (ds.only || key).split(',').map((x) => x.trim());
     const picker = seg(only.map((k) => [k, MX[k].label, 'Switch to this decision.']), key, (k) => { key = k; load(); });
     const head = h('div', { class: 'flexcol', style: { gap: '4px' } });
@@ -140,17 +141,17 @@
     function totals() { const mx = 5 * W.reduce((a, b) => a + b, 0) || 1; return P.opts.map((_, i) => SC[i].reduce((a, v, j) => a + v * W[j], 0) / mx * 100); }
     function build() {
       head.replaceChildren(h('b', { style: { fontSize: '17px' } }, P.q), h('span', { class: 'small' }, 'Context: ' + P.ctx));
-      wbox.replaceChildren(h('b', { class: 'small' }, 'Weights: how much each criterion matters here (0–5)'));
-      P.crit.forEach((c, j) => wbox.append(slider(c[0], { min: 0, max: 5, step: 1, value: W[j], format: (v) => v }, (v) => { W[j] = v; paint(); }, 'How important is this criterion in this context?')));
+      wbox.replaceChildren(h('b', { class: 'small' }, L.weights));
+      P.crit.forEach((c, j) => wbox.append(slider(c[0], { min: 0, max: 5, step: 1, value: W[j], format: (v) => v }, (v) => { W[j] = v; paint(); }, L.weightTip)));
       paint();
     }
     function paint() {
       const t = totals(), best = t.indexOf(Math.max(...t));
-      const hdr = h('tr', {}, h('th', {}, 'Scores (click to change)'), P.opts.map((o) => h('th', { style: { textAlign: 'center' } }, o)));
-      tbl.replaceChildren(h('table', { class: 'm' }, hdr, P.crit.map((c, j) => h('tr', {}, h('td', { class: 'crit' }, c[0]), P.opts.map((_, i) => h('td', {}, h('button', { class: 'heat', type: 'button', style: { background: heat(SC[i][j]) }, 'data-tip': 'Score of this technology for this criterion (1 = poor, 5 = excellent). Click to change.', onclick: () => { SC[i][j] = SC[i][j] % 5 + 1; paint(); } }, String(SC[i][j]))))))));
-      res.replaceChildren(h('b', { class: 'small' }, 'Weighted result'));
+      const hdr = h('tr', {}, h('th', {}, L.scores), P.opts.map((o) => h('th', { style: { textAlign: 'center' } }, o)));
+      tbl.replaceChildren(h('table', { class: 'm' }, hdr, P.crit.map((c, j) => h('tr', {}, h('td', { class: 'crit' }, c[0]), P.opts.map((_, i) => h('td', {}, h('button', { class: 'heat', type: 'button', style: { background: heat(SC[i][j]) }, 'data-tip': L.scoreTip, onclick: () => { SC[i][j] = SC[i][j] % 5 + 1; paint(); } }, String(SC[i][j]))))))));
+      res.replaceChildren(h('b', { class: 'small' }, L.result));
       P.opts.forEach((o, i) => res.append(h('div', { class: 'opt-row' + (i === best ? ' winner' : ''), style: { gridTemplateColumns: '210px 1fr 54px', padding: '3px 6px', borderRadius: '8px' } }, h('span', { style: { fontWeight: 700 } }, o, i === best ? h('span', { class: 'badge-w', style: { marginLeft: '6px' } }, 'BEST FIT') : null), h('div', { class: 'meter' }, h('div', { style: { width: t[i] + '%', background: i === best ? 'var(--gold)' : 'var(--navy)' } })), h('span', { class: 'mono', style: { textAlign: 'right', fontWeight: 700 } }, t[i].toFixed(0) + '%'))));
-      note.replaceChildren(h('b', {}, 'Takeaway: '), P.note);
+      note.replaceChildren(h('b', {}, L.takeaway), P.note);
     }
     const reset = h('button', { class: 'btn small ghost', type: 'button', 'data-tip': 'Restore the context’s original weights and scores.', onclick: load }, 'Reset');
     node.append(h('div', { class: 'flexcol', style: { gap: '8px' } }, h('div', { class: 'row' }, only.length > 1 ? picker : null, reset), head, h('div', { class: 'cols two', style: { gridTemplateColumns: '.9fr 1.35fr', alignItems: 'start' } }, h('div', { class: 'panel narrow' }, wbox), h('div', { class: 'flexcol', style: { gap: '8px' } }, tbl, res)), note));

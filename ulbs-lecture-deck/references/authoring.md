@@ -40,7 +40,7 @@ Rules of thumb: predict first, then reveal (a "Predict:" callout before the widg
 
 ## Data files (`data.js`)
 
-Assigned to `DeckData` before the widgets load: `DeckData.matrix = {key: {label, q, ctx, opts, crit, sc, note}}`, `DeckData.diagram = {case: {H, nodes, edges}}`, `DeckData.sorter = {case: [[text, 'f'|'n', explanation], ...]}`, `DeckData.brief = {case: {from, role, subject, tag: 'teal'|'gold', mail, facts, unknown, hs}}`, `DeckData.method`, `DeckData.interview`, `DeckData.compare`, `DeckData.decide`, `DeckData.checklist = [string, ...]` (shapes in `references/widgets.md`). Copy the shapes from `examples/week05/data.js`. All topic content lives here or in `<project>/widgets/`, never in the skill's `widgets/`.
+Assigned to `DeckData` before the widgets load: `DeckData.matrix = {key: {label, q, ctx, opts, crit, sc, note}}`, `DeckData.diagram = {case: {H, nodes, edges}}`, `DeckData.sorter = {case: [[text, 'f'|'n', explanation], ...]}` or `{case: {boxes: {a: [title, button, tip], b: [...]}, tip, items: [[text, 'a'|'b', why], ...]}}` for other two-box topics, `DeckData.brief = {case: {from, role, subject, tag: 'teal'|'gold', mail, facts, unknown, hs}}`, `DeckData.method`, `DeckData.interview`, `DeckData.compare`, `DeckData.decide`, `DeckData.checklist = [string, ...]` (shapes in `references/widgets.md`). Copy the shapes from `examples/week05/data.js`. All topic content lives here or in `<project>/widgets/`, never in the skill's `widgets/`.
 
 ## Test and review loop
 

@@ -23,26 +23,27 @@
   // ---------------------------------------------------------------- interview
   Deck.register('interview', (node, ds) => {
     const IV = DeckData.interview || {}, C = IV[ds.case || Object.keys(IV)[0]];
+    const L = U.labels('interview', { start: 'Click a question: you are the architect, the client answers.', askTip: 'Ask the client this question.', colKey: 'Non-functional requirement', colVal: 'Answer', asked: '{k} / {n} asked', says: 'Client says:', soWhat: 'So what? ', allTip: 'Ask every question at once and fill the requirements table.', resetTip: 'Clear the table and start again.', know: 'What we already know:', ask: 'What we ask:', sheet: 'The requirements sheet fills in as you ask' }, C.labels);
     const asked = new Set();
-    const ans = h('div', { class: 'answer', style: { '--chip': `var(${C.color})` } }, 'Click a question: you are the architect, the client answers.');
-    const qs = C.q.map((q, i) => h('button', { class: 'q-btn', type: 'button', 'data-tip': 'Ask the client this question.', onclick: () => ask(i) }, `“${q[0]}”`));
+    const ans = h('div', { class: 'answer', style: { '--chip': `var(${C.color})` } }, L.start);
+    const qs = C.q.map((q, i) => h('button', { class: 'q-btn', type: 'button', 'data-tip': L.askTip, onclick: () => ask(i) }, `“${q[0]}”`));
     const rows = C.q.map((q) => ({ k: h('td', { style: { fontWeight: 700, width: '38%' } }, q[2]), v: h('td', { class: 'mono' }, '?') }));
-    const tbl = h('table', { class: 't' }, h('tr', {}, h('th', {}, 'Non-functional requirement'), h('th', {}, 'Answer')), rows.map((r) => h('tr', {}, r.k, r.v)));
-    const prog = h('span', { class: 'pill' }, '0 / ' + C.q.length + ' asked');
+    const tbl = h('table', { class: 't' }, h('tr', {}, h('th', {}, L.colKey), h('th', {}, L.colVal)), rows.map((r) => h('tr', {}, r.k, r.v)));
+    const prog = h('span', { class: 'pill' }, U.fill(L.asked, { k: 0, n: C.q.length }));
     const know = h('div', { class: 'row' }, C.sum.map((t) => h('span', { class: 'pill' }, t)));
     function ask(i) {
       asked.add(i);
       qs[i].classList.add('asked');
       ans.innerHTML = '';
-      ans.append(h('div', { class: 'small' }, 'Client says:'), h('b', { class: 'big' }, C.q[i][1]), h('div', { style: { marginTop: '4px' } }, h('b', {}, 'So what? '), C.q[i][4]));
+      ans.append(h('div', { class: 'small' }, L.says), h('b', { class: 'big' }, C.q[i][1]), h('div', { style: { marginTop: '4px' } }, h('b', {}, L.soWhat), C.q[i][4]));
       rows[i].v.textContent = C.q[i][3]; rows[i].v.parentElement.style.background = '#e8f1ff';
-      prog.textContent = `${asked.size} / ${C.q.length} asked`; prog.className = 'pill' + (asked.size === C.q.length ? ' ok' : '');
+      prog.textContent = U.fill(L.asked, { k: asked.size, n: C.q.length }); prog.className = 'pill' + (asked.size === C.q.length ? ' ok' : '');
     }
-    const all = h('button', { class: 'btn small ghost', type: 'button', 'data-tip': 'Ask every question at once and fill the requirements table.', onclick: () => C.q.forEach((_, i) => ask(i)) }, 'Ask all');
-    const reset = h('button', { class: 'btn small ghost', type: 'button', 'data-tip': 'Clear the table and start again.', onclick: () => { asked.clear(); qs.forEach((b) => b.classList.remove('asked')); rows.forEach((r) => { r.v.textContent = '?'; r.v.parentElement.style.background = ''; }); ans.textContent = 'Click a question: you are the architect, the client answers.'; prog.textContent = '0 / ' + C.q.length + ' asked'; prog.className = 'pill'; } }, 'Reset');
+    const all = h('button', { class: 'btn small ghost', type: 'button', 'data-tip': L.allTip, onclick: () => C.q.forEach((_, i) => ask(i)) }, 'Ask all');
+    const reset = h('button', { class: 'btn small ghost', type: 'button', 'data-tip': L.resetTip, onclick: () => { asked.clear(); qs.forEach((b) => b.classList.remove('asked')); rows.forEach((r) => { r.v.textContent = '?'; r.v.parentElement.style.background = ''; }); ans.textContent = L.start; prog.textContent = U.fill(L.asked, { k: 0, n: C.q.length }); prog.className = 'pill'; } }, 'Reset');
     node.append(h('div', { class: 'cols two', style: { gridTemplateColumns: '1.05fr 1fr' } },
-      h('div', { class: 'flexcol' }, h('div', { class: 'row' }, h('b', {}, 'What we already know:'), know), h('div', { class: 'row' }, h('b', {}, 'What we ask:'), prog, all, reset), qs, ans),
-      h('div', { class: 'panel' }, h('h3', {}, 'The requirements sheet fills in as you ask'), tbl)));
+      h('div', { class: 'flexcol' }, h('div', { class: 'row' }, h('b', {}, L.know), know), h('div', { class: 'row' }, h('b', {}, L.ask), prog, all, reset), qs, ans),
+      h('div', { class: 'panel' }, h('h3', {}, L.sheet), tbl)));
   });
 
   // ================================================================ compare
@@ -61,12 +62,13 @@
   // ---------------------------------------------------------------- checklist
   Deck.register('checklist', (node) => {
     const items = DeckData.checklist || [];
+    const L = U.labels('checklist', { title: 'Your architecture checklist', tip: 'Tick it when you can say it about your own design.' });
     const saved = U.store.get('checklist', []);
     const prog = h('span', { class: 'pill' }), bar = h('div', { class: 'meter' }, h('div', { style: { background: 'var(--green)', width: '0%' } }));
     const list = h('div', { class: 'grid', style: { gridTemplateColumns: '1fr 1fr', gap: '2px 14px' } });
-    const boxes = items.map((t, i) => { const cb = h('input', { type: 'checkbox', checked: saved.includes(i) || null, onchange: upd }); const lab = h('label', { class: 'chk', 'data-tip': 'Tick it when you can say it about your own design.' }, cb, h('span', {}, t)); list.append(lab); return [cb, lab]; });
+    const boxes = items.map((t, i) => { const cb = h('input', { type: 'checkbox', checked: saved.includes(i) || null, onchange: upd }); const lab = h('label', { class: 'chk', 'data-tip': L.tip }, cb, h('span', {}, t)); list.append(lab); return [cb, lab]; });
     function upd() { const on = boxes.map(([c], i) => (c.checked ? i : -1)).filter((i) => i >= 0); U.store.set('checklist', on); boxes.forEach(([c, l]) => l.classList.toggle('done', c.checked)); prog.textContent = `${on.length} / ${items.length}`; prog.className = 'pill' + (on.length === items.length ? ' ok' : ''); bar.firstChild.style.width = on.length / items.length * 100 + '%'; }
-    node.append(h('div', { class: 'flexcol' }, h('div', { class: 'row' }, h('b', {}, 'Your architecture checklist'), prog), bar, list));
+    node.append(h('div', { class: 'flexcol' }, h('div', { class: 'row' }, h('b', {}, L.title), prog), bar, list));
     upd();
   });
 })();

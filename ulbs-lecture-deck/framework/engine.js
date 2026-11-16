@@ -46,7 +46,10 @@ const U = (() => {
     get(k, d) { try { const v = localStorage.getItem(((window.DeckConfig || {}).storePrefix || 'deck.') + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem(((window.DeckConfig || {}).storePrefix || 'deck.') + k, JSON.stringify(v)); } catch (e) { /* works without storage */ } },
   };
-  return { h, s, clamp, fmt, size, money, slider, seg, store };
+  // UI text of a library widget: defaults < DeckData.labels[widget] < per-case `labels`. '{n}' style placeholders are filled by fill().
+  const labels = (widget, defaults, local) => Object.assign({}, defaults, ((window.DeckData || {}).labels || {})[widget], local || {});
+  const fill = (t, o) => String(t).replace(/\{(\w+)\}/g, (m, k) => (k in o ? o[k] : m));
+  return { h, s, clamp, fmt, size, money, slider, seg, store, labels, fill };
 })();
 
 (function () {

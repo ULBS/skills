@@ -15,11 +15,27 @@ List the files in `deck.json` `widgets`: `["basics", "diagram-matrix", "sorter-b
 | `checklist` [basics] | tick list saved in localStorage | none | `DeckData.checklist = [text, ...]` |
 | `diagram` [diagram-matrix] | architecture in 4 views (components, messaging, technology, physical), click a box for reasons, crash replicas | `data-case`, `data-mode` | `DeckData.diagram` |
 | `matrix` [diagram-matrix] | weighted decision matrix: weight sliders, clickable scores, winner bar, Reset | `data-preset`, `data-only="a,b"` | `DeckData.matrix` |
-| `sorter` [sorter-brief] | sort items into functional / non-functional with feedback and score | `data-case` | `DeckData.sorter` |
+| `sorter` [sorter-brief] | sort items into two boxes with feedback and score (default boxes: functional / non-functional) | `data-case` | `DeckData.sorter = {case: [[text, 'f'\|'n', why], ...]}` or `{case: {boxes: {a: [title, button, tip], b: [...]}, tip, items: [[text, 'a'\|'b', why], ...]}}` |
 | `brief` [sorter-brief] | fictional client e-mail with clickable phrases + fact sheet | `data-case` | `DeckData.brief` |
 | `decide` [sorter-brief] | scenario quiz: a new situation, 4 options, feedback on every option, "what decides", score by skill, links to slides to revisit | none | `DeckData.decide` (`{area, link:[slideId,label], ctx, q, driver, opts:[[text, 1\|0, why]]}`) |
 
 Without `data-case` / `data-preset` a widget uses the first key of its `DeckData` object.
+
+### Widget texts (`DeckData.labels`)
+
+The library widgets' fixed texts default to the software-architecture wording of week 5 ("Your architecture checklist", "Client fact sheet", "which requirement decides"...). For another topic, override only the keys you need; `{k}` / `{n}` are filled with the current count / total.
+
+```js
+DeckData.labels = {
+  checklist: { title, tip },
+  interview: { start, askTip, colKey, colVal, asked: '{k} / {n} asked', says, soWhat, allTip, resetTip, know, ask, sheet },
+  brief:     { from, subject, hlTip, intro, done: 'All {n} ...', progress: '{k} of {n} ...', facts, unknown, kinds: { Category: 'ok'|'bad'|''|'warn' } },
+  decide:    { score: '{k} of {n} ...', bySkill, missHead, missBody, allHead, allBody, again, firstHead, firstBody, optTip, right, wrong, best, driver },
+  matrix:    { weights, weightTip, scores, scoreTip, result, takeaway },
+};
+```
+
+`interview` and `brief` also accept `labels: {...}` inside one case (wins over `DeckData.labels`). `sorter` has its own `boxes` / `tip` per case. `diagram` stays architecture-specific (4 fixed views, load balancers, edge types TCP / REST / queue / file / ETL).
 
 ## Topic widgets (`examples/week05/widgets/`, content embedded)
 
