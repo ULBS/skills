@@ -48,6 +48,8 @@ body { color: var(--ink); }
 
 /* ---------- slides ---------- */
 .slides { position: relative; overflow: hidden; }
+/* touch: horizontal moves go to the swipe handler (engine.js); a zoomed slide pans natively */
+.slides { touch-action: pan-y pinch-zoom; } .slides.zoomed { touch-action: auto; }
 .slide { zoom: var(--z, 1); position: absolute; inset: 0; padding: 26px 40px 18px; opacity: 0; visibility: hidden; transform: translateX(28px); transition: opacity .28s ease, transform .28s ease, visibility 0s linear .28s; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
 .slide.past { transform: translateX(-28px); }
 .slide.active { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }

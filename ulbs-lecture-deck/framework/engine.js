@@ -187,6 +187,22 @@ const U = (() => {
     });
     addEventListener('pointerup', () => { const a = document.activeElement; if (a && a.type === 'range') a.blur(); });
 
+    // touch: swipe left / right = next / previous. One finger, mostly horizontal, quick. Not on sliders, text
+    // fields, open overlays, [data-noswipe] widgets, or anything that can still scroll sideways (zoomed slide, wide code).
+    let sw = null;
+    const canScrollX = (el, dx) => { for (let n = el; n && n !== stage; n = n.parentElement) { if (n.scrollWidth > n.clientWidth + 1 && /(auto|scroll)/.test(getComputedStyle(n).overflowX) && (dx < 0 ? n.scrollLeft + n.clientWidth < n.scrollWidth - 1 : n.scrollLeft > 0)) return true; } return false; };
+    stage.addEventListener('touchstart', (e) => {
+      const t = e.touches[0], el = e.target;
+      sw = e.touches.length === 1 && !el.closest('input, textarea, select, [contenteditable], .overlay, [data-noswipe]') ? { x: t.clientX, y: t.clientY, at: Date.now(), el } : null;
+    }, { passive: true });
+    stage.addEventListener('touchmove', (e) => { if (e.touches.length > 1) sw = null; }, { passive: true });
+    stage.addEventListener('touchend', (e) => {
+      if (!sw) return; const t = e.changedTouches[0], dx = t.clientX - sw.x, dy = t.clientY - sw.y, s0 = sw; sw = null;
+      if (Date.now() - s0.at > 800 || Math.abs(dx) < 50 || Math.abs(dx) < 1.5 * Math.abs(dy) || canScrollX(s0.el, dx)) return;
+      hideTip(); show(Deck.index + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+    stage.addEventListener('touchcancel', () => { sw = null; }, { passive: true });
+
     if (U.store.get('open.notes', false)) toggle('notes', true);
     const start = parseInt(location.hash.slice(1), 10);
     show(Number.isFinite(start) ? start - 1 : 0, { silent: true });

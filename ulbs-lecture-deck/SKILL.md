@@ -21,7 +21,7 @@ One command turns `deck.json` + `slides.html` + `data.js` into **one HTML file**
 | `framework/shell.html` header, footer, help overlay | `data.js` all widget content: matrices, diagrams, interviews, quiz items, briefs, checklist |
 | `widgets/*.js` the generic, data-driven library | `widgets/*.js` (optional) topic-specific widgets |
 
-**Zoom**: the stage always fits the window (browser zoom has no effect), so the header has `− 100% +` buttons that zoom the slide content (re-layout like browser zoom, 60%–300%, scrolls when it overflows, saved in localStorage). Keys: `+` `−` `0`, `Ctrl`+`+`/`−`/`0`, `Ctrl`+wheel. Built into `engine.js`/`shell.html`; nothing to do per deck. Slides must keep working at 100% (the test script only checks that).
+**Zoom**: the stage always fits the window (browser zoom has no effect), so the header has `− 100% +` buttons that zoom the slide content (re-layout like browser zoom, 60%–300%, scrolls when it overflows, saved in localStorage). Keys: `+` `−` `0`, `Ctrl`+`+`/`−`/`0`, `Ctrl`+wheel. Built into `engine.js`/`shell.html`; nothing to do per deck. **Touch**: swipe left / right changes slide (one finger, mostly horizontal); it is ignored on sliders, text fields, overlays, anything that can still scroll sideways and inside `[data-noswipe]` (put that on a widget where horizontal dragging is the interaction). Slides must keep working at 100% (the test script only checks that).
 
 Never copy the framework into the project: `build.py` reads it from this skill. Deck-specific CSS goes in `<project>/extra.css`.
 
