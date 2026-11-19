@@ -64,6 +64,30 @@ def warn(msg):
     WARNINGS.append(msg)
 
 
+def shrink_png(data, w_emu, max_dpi=300, max_colors=4096):
+    """Keep uploads small (journal OJS rejects large files with 'HTTP Error'):
+    downscale above max_dpi at the printed width; charts/diagrams (few colours)
+    become 256-colour palette PNGs (visually lossless). Photos keep full colour."""
+    if not PILImage:
+        return data
+    try:
+        im = PILImage.open(io.BytesIO(data))
+        im.load()
+        max_px = int(w_emu / 914400.0 * max_dpi)
+        if max_px > 0 and im.width > max_px:
+            im = im.resize((max_px, int(im.height * max_px / im.width)), PILImage.LANCZOS)
+        if im.mode not in ("RGB", "RGBA", "P", "L"):
+            im = im.convert("RGBA")
+        if im.mode in ("RGB", "RGBA") and im.getcolors(max_colors) is not None:
+            im = im.quantize(256, method=PILImage.Quantize.FASTOCTREE)
+        buf = io.BytesIO()
+        im.save(buf, "PNG", optimize=True)
+        out = buf.getvalue()
+        return out if len(out) < len(data) else data
+    except Exception:
+        return data
+
+
 def esc(text):
     text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", text)
     return _esc(text, {'"': "&quot;"})
@@ -432,6 +456,8 @@ class Builder:
             w_emu, h_emu = MAX_IMG_W_EMU, int(MAX_IMG_W_EMU * ratio)
         if h_emu > MAX_IMG_H_EMU:
             w_emu, h_emu = int(MAX_IMG_H_EMU / ratio), MAX_IMG_H_EMU
+        if ext == "png":
+            data = shrink_png(data, w_emu)
         name = "media/ij_image%d.%s" % (len(self.media) + 1, ext)
         self.media.append(("word/" + name, data))
         rid = self.add_rel(REL_IMAGE, name)

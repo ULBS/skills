@@ -46,6 +46,14 @@ def main():
     top = [el for el in body if el.tag in (W + "p", W + "tbl")]
     errors, warns, ok = [], [], []
 
+    # ---- file size (the journal OJS upload fails with "HTTP Error" somewhere above ~200-500 KB) ----
+    size_kb = os.path.getsize(path) // 1024
+    if size_kb > 300:
+        warns.append("File is %d KB: the IJASITELS upload site rejects large files ('HTTP Error'; "
+                     "~200 KB worked, ~500 KB failed). Compress images (build_ijasitels.py does it for PNG)." % size_kb)
+    else:
+        ok.append("File size %d KB (upload-safe)" % size_kb)
+
     # ---- page setup ----------------------------------------------------------
     sects = root.findall(".//" + W + "sectPr")
     s = sects[-1]
