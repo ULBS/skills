@@ -23,14 +23,14 @@ def run(cmd, **kw):
 
 def via_pandoc(src, workdir, fmt=None):
     media = os.path.join(workdir, "media")
-    cmd = ["pandoc", src, "-t", "markdown-simple_tables-multiline_tables-grid_tables+pipe_tables",
+    cmd = ["pandoc", src, "-s", "-t", "markdown-simple_tables-multiline_tables-grid_tables+pipe_tables",
            "--wrap=none", "--extract-media=" + workdir, "-o", os.path.join(workdir, "extracted.md")]
     if fmt:
         cmd[1:1] = ["-f", fmt]
     r = run(cmd)
     if r.returncode != 0:
         # retry allowing grid tables (complex tables cannot be pipe tables)
-        cmd[3] = "markdown"
+        cmd[cmd.index("-t") + 1] = "markdown"
         r = run(cmd)
     if r.returncode != 0:
         sys.exit("pandoc failed: " + r.stderr)
@@ -122,7 +122,8 @@ def main():
         fmt = {".tex": "latex", ".html": "html", ".htm": "html", ".odt": "odt", ".docx": "docx",
                ".epub": "epub", ".rst": "rst"}.get(ext)
         via_pandoc(src, workdir, fmt)
-        info.append("converted with pandoc (%s)" % (fmt or "auto"))
+        info.append("converted with pandoc (%s). Title/subtitle styled paragraphs appear in the YAML "
+                    "header of extracted.md (title: / subtitle:)." % (fmt or "auto"))
         if ext == ".docx":
             info.append("Note: Word equations become $LaTeX$; check them. Images that are EMF/WMF are kept "
                         "as-is (the builder converts them to PNG via LibreOffice).")
